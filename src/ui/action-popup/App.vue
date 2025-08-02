@@ -1,6 +1,6 @@
 <template>
   <UApp>
-    <main class="w-[200px] h-[200px]">
+    <main class="w-[800px] h-[600px] flex flex-col">
       <RouterView />
     </main>
   </UApp>
