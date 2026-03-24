@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { Badge } from './components/ui/badge';
+
 </script>
 
 <template>
-  <HelloWorld />
+  <div>
+    <Badge>
+      ABC
+    </Badge>
+  </div>
 </template>
