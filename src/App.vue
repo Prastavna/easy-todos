@@ -9,6 +9,19 @@ import TodoStats from '@/components/todos/TodoStats.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
+  compareTodos,
+  formatUpdatedAt,
+  getDeadlineLabel,
+  getPriorityTone,
+  getSectionStorageKey,
+  getStatusTone,
+  groupTodos,
+  isDueToday,
+  isOverdue,
+  isUpcoming,
+  normalizeGroup,
+} from '@/lib/todo-helpers'
+import {
   deadlineOptions,
   groupByOptions,
   priorityOptions,
@@ -18,7 +31,6 @@ import {
   type Priority,
   type Todo,
   type TodoForm,
-  type TodoSection,
 } from '@/lib/todos'
 
 const STORAGE_KEY = 'easy-todos.todos'
@@ -44,33 +56,6 @@ function createEmptyForm(): TodoForm {
     deadline: '',
     group: 'General',
   }
-}
-
-function normalizeGroup(value: string) {
-  const normalized = value.trim()
-  return normalized ? normalized : 'General'
-}
-
-function getDateValue(date: string) {
-  return new Date(`${date}T00:00:00`).getTime()
-}
-
-function getTodayValue() {
-  const date = new Date()
-  date.setHours(0, 0, 0, 0)
-  return date.getTime()
-}
-
-function isOverdue(todo: Todo) {
-  return Boolean(todo.deadline) && getDateValue(todo.deadline) < getTodayValue() && !todo.completed
-}
-
-function isDueToday(todo: Todo) {
-  return Boolean(todo.deadline) && getDateValue(todo.deadline) === getTodayValue()
-}
-
-function isUpcoming(todo: Todo) {
-  return Boolean(todo.deadline) && getDateValue(todo.deadline) > getTodayValue()
 }
 
 function loadTodos() {
@@ -206,119 +191,6 @@ function clearFilters() {
   groupBy.value = 'group'
 }
 
-function formatDeadline(value: string) {
-  if (!value) {
-    return 'No deadline'
-  }
-
-  return new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(`${value}T00:00:00`))
-}
-
-function getDeadlineLabel(todo: Todo) {
-  if (!todo.deadline) {
-    return 'No deadline'
-  }
-  if (isOverdue(todo)) {
-    return `Overdue · ${formatDeadline(todo.deadline)}`
-  }
-  if (isDueToday(todo)) {
-    return 'Due today'
-  }
-
-  return formatDeadline(todo.deadline)
-}
-
-function formatUpdatedAt(value: string) {
-  return new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(value))
-}
-
-function getSectionStorageKey(sectionKey: string) {
-  return `${groupBy.value}:${sectionKey}`
-}
-
-function getPriorityTone(priority: Priority) {
-  if (priority === 'high') {
-    return 'bg-rose-100 text-rose-700 border-rose-200'
-  }
-  if (priority === 'medium') {
-    return 'bg-amber-100 text-amber-700 border-amber-200'
-  }
-
-  return 'bg-emerald-100 text-emerald-700 border-emerald-200'
-}
-
-function getStatusTone(todo: Todo) {
-  return todo.completed
-    ? 'bg-slate-200 text-slate-700 border-slate-300'
-    : 'bg-sky-100 text-sky-700 border-sky-200'
-}
-
-function compareTodos(a: Todo, b: Todo) {
-  if (a.completed !== b.completed) {
-    return Number(a.completed) - Number(b.completed)
-  }
-
-  const aDeadline = a.deadline ? getDateValue(a.deadline) : Number.MAX_SAFE_INTEGER
-  const bDeadline = b.deadline ? getDateValue(b.deadline) : Number.MAX_SAFE_INTEGER
-
-  if (aDeadline !== bDeadline) {
-    return aDeadline - bDeadline
-  }
-
-  return b.updatedAt.localeCompare(a.updatedAt)
-}
-
-function getSectionMeta(todo: Todo) {
-  if (groupBy.value === 'priority') {
-    const orderMap: Record<Priority, number> = { high: 0, medium: 1, low: 2 }
-    const labelMap: Record<Priority, string> = { high: 'High priority', medium: 'Medium priority', low: 'Low priority' }
-    return { key: todo.priority, label: labelMap[todo.priority], order: orderMap[todo.priority] }
-  }
-
-  if (groupBy.value === 'status') {
-    return todo.completed
-      ? { key: 'completed', label: 'Completed', order: 1 }
-      : { key: 'active', label: 'Active', order: 0 }
-  }
-
-  if (groupBy.value === 'deadline') {
-    if (!todo.deadline) {
-      return { key: 'no-deadline', label: 'No deadline', order: Number.MAX_SAFE_INTEGER }
-    }
-    if (isOverdue(todo)) {
-      return { key: 'overdue', label: 'Overdue', order: -2 }
-    }
-    if (isDueToday(todo)) {
-      return { key: 'today', label: 'Due today', order: -1 }
-    }
-
-    return {
-      key: todo.deadline,
-      label: formatDeadline(todo.deadline),
-      order: getDateValue(todo.deadline),
-    }
-  }
-
-  if (groupBy.value === 'group') {
-    const label = normalizeGroup(todo.group)
-    return {
-      key: label.toLowerCase(),
-      label,
-      order: label.toLowerCase().charCodeAt(0),
-    }
-  }
-
-  return { key: 'all', label: 'All todos', order: 0 }
-}
-
 const canSubmit = computed(() => form.value.title.trim().length > 0)
 const dialogTitle = computed(() => (editingId.value ? 'Edit task' : 'Create task'))
 const dialogDescription = computed(() =>
@@ -359,44 +231,18 @@ const filteredTodos = computed(() => {
     .sort(compareTodos)
 })
 
-const groupedTodos = computed<TodoSection[]>(() => {
-  const sections = new Map<string, TodoSection>()
-
-  for (const todo of filteredTodos.value) {
-    const meta = getSectionMeta(todo)
-    const existing = sections.get(meta.key)
-
-    if (existing) {
-      existing.items.push(todo)
-      continue
-    }
-
-    sections.set(meta.key, {
-      key: meta.key,
-      label: meta.label,
-      order: meta.order,
-      items: [todo],
-    })
-  }
-
-  return [...sections.values()].sort((a, b) => {
-    if (a.order !== b.order) {
-      return a.order - b.order
-    }
-    return a.label.localeCompare(b.label)
-  })
-})
+const groupedTodos = computed(() => groupTodos(filteredTodos.value, groupBy.value))
 
 const expandedSections = computed({
   get: () => groupedTodos.value
-    .filter((section) => !collapsedSections.value[getSectionStorageKey(section.key)])
+    .filter((section) => !collapsedSections.value[getSectionStorageKey(groupBy.value, section.key)])
     .map((section) => section.key),
   set: (value: string[] | string) => {
     const expanded = new Set(Array.isArray(value) ? value : [value])
     const nextState = { ...collapsedSections.value }
 
     for (const section of groupedTodos.value) {
-      nextState[getSectionStorageKey(section.key)] = !expanded.has(section.key)
+      nextState[getSectionStorageKey(groupBy.value, section.key)] = !expanded.has(section.key)
     }
 
     collapsedSections.value = nextState
