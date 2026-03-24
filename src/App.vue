@@ -374,7 +374,6 @@ const availableGroups = computed(() => {
 })
 
 const activeCount = computed(() => todos.value.filter((todo) => !todo.completed).length)
-const completedCount = computed(() => todos.value.filter((todo) => todo.completed).length)
 const overdueCount = computed(() => todos.value.filter((todo) => isOverdue(todo)).length)
 const dueTodayCount = computed(() => todos.value.filter((todo) => isDueToday(todo) && !todo.completed).length)
 
@@ -462,25 +461,10 @@ watch(todos, saveTodos, { deep: true })
 <template>
   <Dialog v-model:open="dialogOpen">
     <div class="app-shell min-h-screen">
-      <div class="mx-auto flex min-h-screen max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-        <section class="rounded-[2rem] border border-white/70 bg-white/85 p-5 shadow-[0_20px_80px_-40px_rgba(10,61,72,0.45)] backdrop-blur xl:p-8">
-          <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div class="max-w-2xl space-y-4">
-              <Badge class="w-fit border-0 bg-teal-100 px-3 py-1 text-teal-800">
-                <Icon class="mr-1 size-4" icon="solar:checklist-minimalistic-bold-duotone" />
-                Daily flow
-              </Badge>
-              <div class="space-y-3">
-                <h1 class="font-display text-4xl leading-none text-slate-900 sm:text-5xl">
-                  Organize work with calm, clear priority.
-                </h1>
-                <p class="max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
-                  Keep todos grouped, visible, and easy to act on with deadlines, filters, and quick editing.
-                </p>
-              </div>
-            </div>
-
-            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div class="mx-auto flex min-h-screen w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-5 lg:px-6 lg:py-8">
+        <section class="rounded-[2rem] border border-white/70 bg-white/85 p-4 shadow-[0_20px_80px_-40px_rgba(10,61,72,0.45)] backdrop-blur xl:p-6">
+          <div class="space-y-4">
+            <div class="grid gap-3 sm:grid-cols-3">
               <div class="rounded-2xl border border-teal-100 bg-teal-50/80 px-4 py-3">
                 <p class="text-xs uppercase tracking-[0.24em] text-teal-700">Active</p>
                 <p class="mt-2 text-3xl font-semibold text-slate-900">{{ activeCount }}</p>
@@ -493,44 +477,29 @@ watch(todos, saveTodos, { deep: true })
                 <p class="text-xs uppercase tracking-[0.24em] text-rose-700">Overdue</p>
                 <p class="mt-2 text-3xl font-semibold text-slate-900">{{ overdueCount }}</p>
               </div>
-              <Button class="h-auto min-h-24 rounded-2xl bg-slate-900 px-5 py-4 text-left text-white hover:bg-slate-800" @click="openCreateDialog">
-                <span class="flex items-center gap-3">
-                  <span class="rounded-full bg-white/15 p-2">
-                    <Icon class="size-5" icon="solar:add-circle-bold" />
-                  </span>
-                  <span>
-                    <span class="block text-sm font-medium">New todo</span>
-                    <span class="block text-xs text-white/70">Add title, deadline, and group</span>
-                  </span>
-                </span>
-              </Button>
             </div>
           </div>
         </section>
 
-        <div class="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside class="space-y-6">
-            <Card class="border-white/70 bg-white/88 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur">
+        <div class="space-y-4">
+          <Card class="border-white/70 bg-white/88 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur">
               <CardHeader>
                 <CardTitle class="flex items-center gap-2 text-lg">
                   <Icon class="size-5 text-teal-700" icon="solar:tuning-4-bold-duotone" />
                   Focus filters
                 </CardTitle>
-                <CardDescription>
-                  Narrow the list by text, status, priority, group, or deadline.
-                </CardDescription>
               </CardHeader>
               <CardContent class="space-y-4">
-                <div class="space-y-2">
+                <div class="flex flex-wrap items-end gap-3">
+                  <div class="min-w-[220px] flex-[1.6] space-y-2">
                   <label class="text-sm font-medium text-slate-700">Search</label>
                   <div class="relative">
                     <Icon class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" icon="solar:magnifer-linear" />
                     <Input v-model="search" class="h-11 rounded-xl border-slate-200 bg-white pl-9" placeholder="Find a todo" />
                   </div>
-                </div>
+                  </div>
 
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                  <div class="space-y-2">
+                  <div class="min-w-[150px] flex-1 space-y-2">
                     <label class="text-sm font-medium text-slate-700">Status</label>
                     <Select v-model="statusFilter">
                       <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -544,7 +513,7 @@ watch(todos, saveTodos, { deep: true })
                     </Select>
                   </div>
 
-                  <div class="space-y-2">
+                  <div class="min-w-[150px] flex-1 space-y-2">
                     <label class="text-sm font-medium text-slate-700">Priority</label>
                     <Select v-model="priorityFilter">
                       <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -559,7 +528,7 @@ watch(todos, saveTodos, { deep: true })
                     </Select>
                   </div>
 
-                  <div class="space-y-2">
+                  <div class="min-w-[150px] flex-1 space-y-2">
                     <label class="text-sm font-medium text-slate-700">Deadline</label>
                     <Select v-model="deadlineFilter">
                       <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -573,7 +542,7 @@ watch(todos, saveTodos, { deep: true })
                     </Select>
                   </div>
 
-                  <div class="space-y-2">
+                  <div class="min-w-[150px] flex-1 space-y-2">
                     <label class="text-sm font-medium text-slate-700">Group</label>
                     <Select v-model="groupFilter">
                       <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -588,7 +557,7 @@ watch(todos, saveTodos, { deep: true })
                     </Select>
                   </div>
 
-                  <div class="space-y-2 sm:col-span-2 lg:col-span-1">
+                  <div class="min-w-[150px] flex-1 space-y-2">
                     <label class="text-sm font-medium text-slate-700">Group list by</label>
                     <Select v-model="groupBy">
                       <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -601,48 +570,20 @@ watch(todos, saveTodos, { deep: true })
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
 
-                <Button class="w-full rounded-xl" variant="outline" @click="clearFilters">
-                  Reset filters
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card class="border-white/70 bg-white/88 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur">
-              <CardHeader>
-                <CardTitle class="flex items-center gap-2 text-lg">
-                  <Icon class="size-5 text-slate-700" icon="solar:chart-square-bold-duotone" />
-                  Overview
-                </CardTitle>
-                <CardDescription>
-                  Local-first storage keeps your list in this browser session and beyond.
-                </CardDescription>
-              </CardHeader>
-              <CardContent class="space-y-4">
-                <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                  <div class="rounded-2xl bg-slate-100 px-4 py-3">
-                    <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Total</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">{{ todos.length }}</p>
-                  </div>
-                  <div class="rounded-2xl bg-slate-100 px-4 py-3">
-                    <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Completed</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">{{ completedCount }}</p>
-                  </div>
-                  <div class="rounded-2xl bg-slate-100 px-4 py-3">
-                    <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Groups</p>
-                    <p class="mt-1 text-2xl font-semibold text-slate-900">{{ availableGroups.length }}</p>
+                  <div class="min-w-[140px] sm:ml-auto">
+                    <Button class="h-11 w-full rounded-xl px-4 sm:w-auto" variant="outline" @click="clearFilters">
+                      Reset filters
+                    </Button>
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          </aside>
+          </Card>
 
-          <main class="space-y-5">
-            <div class="flex flex-col gap-3 rounded-[1.75rem] border border-white/70 bg-white/88 p-4 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <main class="space-y-4">
+            <div class="flex flex-col gap-3 rounded-[1.75rem] border border-white/70 bg-white/88 px-4 py-3 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p class="text-sm font-medium text-slate-900">{{ filteredTodos.length }} visible todos</p>
-                <p class="text-sm text-slate-500">Sorted by completion state, deadline, and latest update.</p>
               </div>
               <Button class="rounded-xl" @click="openCreateDialog">
                 <Icon class="size-4" icon="solar:add-circle-linear" />
@@ -650,24 +591,24 @@ watch(todos, saveTodos, { deep: true })
               </Button>
             </div>
 
-            <div v-if="groupedTodos.length" class="space-y-5">
-              <section v-for="section in groupedTodos" :key="section.key" class="space-y-3">
+            <div v-if="groupedTodos.length" class="space-y-4">
+              <section v-for="section in groupedTodos" :key="section.key" class="space-y-2">
                 <div class="flex items-center justify-between gap-3 px-1">
                   <div>
                     <h2 class="font-display text-2xl text-slate-900">{{ section.label }}</h2>
                     <p class="text-sm text-slate-500">{{ section.items.length }} task{{ section.items.length === 1 ? '' : 's' }}</p>
                   </div>
-                  <Separator class="hidden max-w-36 flex-1 bg-slate-200 sm:block" />
+                  <Separator class="hidden flex-1 bg-slate-200 sm:block" />
                 </div>
 
-                <div class="grid gap-4 xl:grid-cols-2">
+                <div class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4">
                   <Card
                     v-for="todo in section.items"
                     :key="todo.id"
                     class="border-white/80 bg-white/92 shadow-[0_16px_60px_-44px_rgba(15,23,42,0.55)] transition-transform duration-200 hover:-translate-y-0.5"
                   >
-                    <CardHeader class="gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div class="space-y-3">
+                    <CardHeader class="gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div class="min-w-0 space-y-3">
                         <div class="flex flex-wrap items-center gap-2">
                           <Badge :class="getPriorityTone(todo.priority)">
                             {{ todo.priority }} priority
@@ -688,38 +629,37 @@ watch(todos, saveTodos, { deep: true })
                           </CardDescription>
                         </div>
                       </div>
-
-                      <Button
-                        class="shrink-0 rounded-full"
-                        size="icon"
-                        :variant="todo.completed ? 'secondary' : 'outline'"
-                        @click="toggleTodo(todo.id)"
-                      >
-                        <Icon :icon="todo.completed ? 'solar:check-circle-bold' : 'solar:check-circle-linear'" class="size-5" />
-                      </Button>
                     </CardHeader>
 
-                    <CardContent class="space-y-4">
-                      <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500">
-                        <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
-                          <Icon class="size-4 text-slate-500" icon="solar:calendar-mark-linear" />
-                          {{ getDeadlineLabel(todo) }}
-                        </span>
-                        <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
-                          <Icon class="size-4 text-slate-500" icon="solar:clock-circle-linear" />
-                          Updated {{ formatUpdatedAt(todo.updatedAt) }}
-                        </span>
-                      </div>
+                    <CardContent class="space-y-3">
+                      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                        <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500 sm:max-w-[60%]">
+                          <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
+                            <Icon class="size-4 text-slate-500" icon="solar:calendar-mark-linear" />
+                            {{ getDeadlineLabel(todo) }}
+                          </span>
+                          <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
+                            <Icon class="size-4 text-slate-500" icon="solar:clock-circle-linear" />
+                            Updated {{ formatUpdatedAt(todo.updatedAt) }}
+                          </span>
+                        </div>
 
-                      <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
-                        <Button class="rounded-xl" variant="outline" @click="openEditDialog(todo)">
+                        <div class="flex shrink-0 items-center justify-end gap-2">
+                        <Button
+                          class="rounded-full"
+                          size="icon"
+                          :variant="todo.completed ? 'secondary' : 'outline'"
+                          @click="toggleTodo(todo.id)"
+                        >
+                          <Icon :icon="todo.completed ? 'solar:check-circle-bold' : 'solar:check-circle-linear'" class="size-5" />
+                        </Button>
+                        <Button class="rounded-full" size="icon" variant="outline" @click="openEditDialog(todo)" aria-label="Edit todo" title="Edit todo">
                           <Icon class="size-4" icon="solar:pen-linear" />
-                          Edit
                         </Button>
-                        <Button class="rounded-xl" variant="destructive" @click="removeTodo(todo.id)">
+                        <Button class="rounded-full" size="icon" variant="destructive" @click="removeTodo(todo.id)" aria-label="Delete todo" title="Delete todo">
                           <Icon class="size-4" icon="solar:trash-bin-trash-linear" />
-                          Delete
                         </Button>
+                      </div>
                       </div>
                     </CardContent>
                   </Card>
