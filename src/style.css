@@ -43,24 +43,24 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: oklch(0.977 0.018 95.29);
+  --foreground: oklch(0.213 0.032 244.53);
+  --card: oklch(0.995 0.009 95.11);
+  --card-foreground: oklch(0.213 0.032 244.53);
+  --popover: oklch(0.995 0.009 95.11);
+  --popover-foreground: oklch(0.213 0.032 244.53);
+  --primary: oklch(0.446 0.092 204.18);
+  --primary-foreground: oklch(0.985 0.01 95.1);
+  --secondary: oklch(0.947 0.019 190.88);
+  --secondary-foreground: oklch(0.248 0.029 244.14);
+  --muted: oklch(0.956 0.013 92.84);
+  --muted-foreground: oklch(0.48 0.03 241.6);
+  --accent: oklch(0.936 0.033 154.12);
+  --accent-foreground: oklch(0.248 0.029 244.14);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.882 0.018 93.73);
+  --input: oklch(0.9 0.014 93.92);
+  --ring: oklch(0.638 0.09 204.29);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -116,5 +116,25 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at top left, rgba(46, 138, 153, 0.2), transparent 28%),
+      radial-gradient(circle at top right, rgba(253, 186, 116, 0.18), transparent 22%),
+      linear-gradient(180deg, rgba(255, 252, 245, 0.92), rgba(247, 243, 234, 0.96));
   }
+
+  #app {
+    min-height: 100vh;
+  }
+}
+
+.app-shell {
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.32), transparent 46%),
+    radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.08), transparent 22%);
+}
+
+.font-display {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
 }
