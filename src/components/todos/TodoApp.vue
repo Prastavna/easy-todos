@@ -8,7 +8,6 @@ import TodoSections from '@/components/todos/TodoSections.vue'
 import TodoStats from '@/components/todos/TodoStats.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
 import {
   compareTodos,
   formatUpdatedAt,
@@ -22,12 +21,7 @@ import {
   isUpcoming,
   normalizeGroup,
 } from '@/lib/todo-helpers'
-import {
-  getDefaultExtensionPreferences,
-  loadExtensionPreferences,
-  openAppInTab,
-  saveExtensionPreferences,
-} from '@/lib/extension'
+import { openAppInTab } from '@/lib/extension'
 import {
   deadlineOptions,
   groupByOptions,
@@ -41,7 +35,7 @@ import {
 } from '@/lib/todos'
 
 const props = withDefaults(defineProps<{
-  mode?: 'web' | 'popup' | 'newtab'
+  mode?: 'web' | 'popup' | 'tab'
 }>(), {
   mode: 'web',
 })
@@ -60,8 +54,6 @@ const dialogOpen = ref(false)
 const editingId = ref<string | null>(null)
 const form = ref<TodoForm>(createEmptyForm())
 const collapsedSections = ref<Record<string, boolean>>({})
-const extensionPreferences = ref(getDefaultExtensionPreferences())
-const extensionPreferencesLoaded = ref(props.mode === 'web')
 
 function createEmptyForm(): TodoForm {
   return {
@@ -194,16 +186,8 @@ async function handleOpenInTab() {
   await openAppInTab()
 }
 
-function updateShowAppOnNewTab(value: boolean) {
-  extensionPreferences.value = {
-    ...extensionPreferences.value,
-    showAppOnNewTab: value,
-  }
-}
-
 const isPopup = computed(() => props.mode === 'popup')
 const showExtensionControls = computed(() => props.mode !== 'web')
-const canRenderWorkspace = computed(() => props.mode !== 'newtab' || extensionPreferences.value.showAppOnNewTab)
 const canSubmit = computed(() => form.value.title.trim().length > 0)
 const dialogTitle = computed(() => (editingId.value ? 'Edit task' : 'Create task'))
 const dialogDescription = computed(() =>
@@ -268,23 +252,13 @@ const containerClass = computed(() =>
     : 'mx-auto flex min-h-screen w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-5 lg:px-6 lg:py-8',
 )
 
-onMounted(async () => {
+onMounted(() => {
   loadTodos()
   loadCollapsedSections()
-
-  if (props.mode !== 'web') {
-    extensionPreferences.value = await loadExtensionPreferences()
-    extensionPreferencesLoaded.value = true
-  }
 })
 
 watch(todos, saveTodos, { deep: true })
 watch(collapsedSections, saveCollapsedSections, { deep: true })
-watch(extensionPreferences, async () => {
-  if (props.mode !== 'web' && extensionPreferencesLoaded.value) {
-    await saveExtensionPreferences(extensionPreferences.value)
-  }
-}, { deep: true })
 </script>
 
 <template>
@@ -298,120 +272,88 @@ watch(extensionPreferences, async () => {
           <div>
             <p class="text-sm font-semibold text-slate-900">Easy Todos</p>
             <p class="text-xs text-slate-500">
-              {{ props.mode === 'popup' ? 'Chrome popup' : 'Chrome new tab' }}
+              {{ props.mode === 'popup' ? 'Chrome popup' : 'Extension tab' }}
             </p>
           </div>
 
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-            <Button v-if="props.mode !== 'newtab'" class="rounded-xl" variant="outline" @click="handleOpenInTab">
-              <Icon class="size-4" icon="solar:square-arrow-right-up-linear" />
-              Open in tab
-            </Button>
-
-            <label class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 sm:min-w-[250px]">
-              <span class="min-w-0">
-                <span class="block text-sm font-medium text-slate-900">Show app on new tab</span>
-                <span class="block text-xs text-slate-500">Use Easy Todos when opening a new tab.</span>
-              </span>
-              <Switch
-                :checked="extensionPreferences.showAppOnNewTab"
-                @update:checked="updateShowAppOnNewTab"
-              />
-            </label>
-          </div>
+          <Button v-if="props.mode === 'popup'" class="rounded-xl" variant="outline" @click="handleOpenInTab">
+            <Icon class="size-4" icon="solar:square-arrow-right-up-linear" />
+            Open in tab
+          </Button>
         </div>
       </section>
 
-      <template v-if="extensionPreferencesLoaded && canRenderWorkspace">
-        <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" />
+      <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" />
 
-        <div class="space-y-4">
-          <TodoFilters
-            :search="search"
-            :status-filter="statusFilter"
-            :priority-filter="priorityFilter"
-            :deadline-filter="deadlineFilter"
-            :group-filter="groupFilter"
-            :group-by="groupBy"
-            :available-groups="availableGroups"
-            :status-options="statusOptions"
-            :priority-options="priorityOptions"
-            :deadline-options="deadlineOptions"
-            :group-by-options="groupByOptions"
-            @update:search="search = $event"
-            @update:status-filter="statusFilter = $event"
-            @update:priority-filter="priorityFilter = $event"
-            @update:deadline-filter="deadlineFilter = $event"
-            @update:group-filter="groupFilter = $event"
-            @update:group-by="groupBy = $event"
-            @reset="clearFilters"
+      <div class="space-y-4">
+        <TodoFilters
+          :search="search"
+          :status-filter="statusFilter"
+          :priority-filter="priorityFilter"
+          :deadline-filter="deadlineFilter"
+          :group-filter="groupFilter"
+          :group-by="groupBy"
+          :available-groups="availableGroups"
+          :status-options="statusOptions"
+          :priority-options="priorityOptions"
+          :deadline-options="deadlineOptions"
+          :group-by-options="groupByOptions"
+          @update:search="search = $event"
+          @update:status-filter="statusFilter = $event"
+          @update:priority-filter="priorityFilter = $event"
+          @update:deadline-filter="deadlineFilter = $event"
+          @update:group-filter="groupFilter = $event"
+          @update:group-by="groupBy = $event"
+          @reset="clearFilters"
+        />
+
+        <main class="space-y-4">
+          <div class="flex flex-col gap-3 rounded-[1.75rem] border border-white/70 bg-white/88 px-4 py-3 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm font-medium text-slate-900">{{ filteredTodos.length }} visible todos</p>
+            <Button class="rounded-xl" @click="openCreateDialog">
+              <Icon class="size-4" icon="solar:add-circle-linear" />
+              Add todo
+            </Button>
+          </div>
+
+          <TodoSections
+            v-if="groupedTodos.length"
+            :sections="groupedTodos"
+            :expanded-sections="expandedSections"
+            :get-priority-tone="getPriorityTone"
+            :get-status-tone="getStatusTone"
+            :normalize-group="normalizeGroup"
+            :get-deadline-label="getDeadlineLabel"
+            :format-updated-at="formatUpdatedAt"
+            @update:expanded-sections="expandedSections = $event"
+            @toggle="toggleTodo"
+            @edit="openEditDialog"
+            @remove="removeTodo"
           />
 
-          <main class="space-y-4">
-            <div class="flex flex-col gap-3 rounded-[1.75rem] border border-white/70 bg-white/88 px-4 py-3 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-              <p class="text-sm font-medium text-slate-900">{{ filteredTodos.length }} visible todos</p>
-              <Button class="rounded-xl" @click="openCreateDialog">
-                <Icon class="size-4" icon="solar:add-circle-linear" />
-                Add todo
-              </Button>
-            </div>
-
-            <TodoSections
-              v-if="groupedTodos.length"
-              :sections="groupedTodos"
-              :expanded-sections="expandedSections"
-              :get-priority-tone="getPriorityTone"
-              :get-status-tone="getStatusTone"
-              :normalize-group="normalizeGroup"
-              :get-deadline-label="getDeadlineLabel"
-              :format-updated-at="formatUpdatedAt"
-              @update:expanded-sections="expandedSections = $event"
-              @toggle="toggleTodo"
-              @edit="openEditDialog"
-              @remove="removeTodo"
-            />
-
-            <Card v-else class="border-dashed border-slate-300 bg-white/85 py-8 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur">
-              <CardContent class="flex flex-col items-center justify-center gap-4 text-center">
-                <div class="rounded-full bg-slate-100 p-4 text-slate-600">
-                  <Icon class="size-8" icon="solar:notes-minimalistic-bold-duotone" />
-                </div>
-                <div class="space-y-2">
-                  <h2 class="font-display text-3xl text-slate-900">Nothing matches yet</h2>
-                  <p class="mx-auto max-w-md text-sm leading-6 text-slate-500">
-                    Add your first task or reset the filters to bring hidden todos back into view.
-                  </p>
-                </div>
-                <div class="flex flex-col gap-2 sm:flex-row">
-                  <Button class="rounded-xl" @click="openCreateDialog">
-                    Create todo
-                  </Button>
-                  <Button class="rounded-xl" variant="outline" @click="clearFilters">
-                    Reset filters
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </main>
-        </div>
-      </template>
-
-      <Card v-else-if="props.mode === 'newtab'" class="border-white/70 bg-white/88 py-10 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur">
-        <CardContent class="flex flex-col items-center gap-4 text-center">
-          <div class="rounded-full bg-slate-100 p-4 text-slate-600">
-            <Icon class="size-8" icon="solar:window-frame-bold-duotone" />
-          </div>
-          <div class="space-y-2">
-            <h1 class="font-display text-3xl text-slate-900">New tab mode is off</h1>
-            <p class="max-w-md text-sm leading-6 text-slate-500">
-              Enable it to use Easy Todos as your new-tab page inside Chrome.
-            </p>
-          </div>
-          <Button class="rounded-xl" @click="updateShowAppOnNewTab(true)">
-            Enable new tab app
-          </Button>
-        </CardContent>
-      </Card>
+          <Card v-else class="border-dashed border-slate-300 bg-white/85 py-8 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur">
+            <CardContent class="flex flex-col items-center justify-center gap-4 text-center">
+              <div class="rounded-full bg-slate-100 p-4 text-slate-600">
+                <Icon class="size-8" icon="solar:notes-minimalistic-bold-duotone" />
+              </div>
+              <div class="space-y-2">
+                <h2 class="font-display text-3xl text-slate-900">Nothing matches yet</h2>
+                <p class="mx-auto max-w-md text-sm leading-6 text-slate-500">
+                  Add your first task or reset the filters to bring hidden todos back into view.
+                </p>
+              </div>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                <Button class="rounded-xl" @click="openCreateDialog">
+                  Create todo
+                </Button>
+                <Button class="rounded-xl" variant="outline" @click="clearFilters">
+                  Reset filters
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
     </div>
 
     <TodoFormDialog

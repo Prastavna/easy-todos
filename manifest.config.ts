@@ -10,7 +10,5 @@ export default defineManifest({
     default_popup: 'popup.html',
     default_title: 'Easy Todos',
   },
-  chrome_url_overrides: {
-    newtab: 'newtab.html',
-  },
+  options_page: 'app.html',
 })
