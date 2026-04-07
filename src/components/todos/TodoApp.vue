@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 
 import TodoFilters from '@/components/todos/TodoFilters.vue'
@@ -186,6 +186,39 @@ async function handleOpenInTab() {
   await openAppInTab()
 }
 
+function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false
+  }
+
+  return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) {
+    return
+  }
+
+  if (isTypingTarget(event.target) || dialogOpen.value) {
+    return
+  }
+
+  if (event.key === '/') {
+    event.preventDefault()
+    const searchInput = document.getElementById('todo-search')
+    if (searchInput instanceof HTMLInputElement) {
+      searchInput.focus()
+      searchInput.select()
+    }
+    return
+  }
+
+  if (event.key.toLowerCase() === 'n') {
+    event.preventDefault()
+    openCreateDialog()
+  }
+}
+
 const isPopup = computed(() => props.mode === 'popup')
 const canSubmit = computed(() => form.value.title.trim().length > 0)
 const hasActiveFilters = computed(() =>
@@ -262,6 +295,11 @@ const containerClass = computed(() =>
 onMounted(() => {
   loadTodos()
   loadCollapsedSections()
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown)
 })
 
 watch(todos, saveTodos, { deep: true })

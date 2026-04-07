@@ -76,6 +76,7 @@ function updateGroupBy(value: unknown) {
           <div class="relative min-w-0 flex-1">
             <Icon class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" icon="solar:magnifer-linear" />
             <Input
+              id="todo-search"
               :model-value="props.search"
               class="h-11 rounded-xl border-slate-200 bg-white pl-9"
               placeholder="Find a todo"
