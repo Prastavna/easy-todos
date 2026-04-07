@@ -31,36 +31,36 @@ const emit = defineEmits<{
 
 <template>
   <Dialog :open="props.open" @update:open="emit('update:open', $event)">
-    <DialogContent class="border-white/70 bg-white/96 sm:max-w-xl">
-      <DialogHeader>
-        <DialogTitle class="font-display text-3xl text-slate-900">
+    <DialogContent class="max-h-[calc(100vh-1.5rem)] overflow-y-auto border-white/70 bg-white/96 p-4 sm:max-w-xl sm:p-5">
+      <DialogHeader class="gap-1">
+        <DialogTitle class="font-display text-2xl text-slate-900 sm:text-3xl">
           {{ props.title }}
         </DialogTitle>
-        <DialogDescription>
+        <DialogDescription class="hidden sm:block">
           {{ props.description }}
         </DialogDescription>
       </DialogHeader>
 
-      <form class="space-y-5" @submit.prevent="emit('submit')">
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-slate-700">Title</label>
-          <Input v-model="props.form.title" class="h-11 rounded-xl border-slate-200" placeholder="Ship landing page copy" />
+      <form class="space-y-4" @submit.prevent="emit('submit')">
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-slate-700">Title <span class="text-rose-500">*</span></label>
+          <Input v-model="props.form.title" class="h-10 rounded-xl border-slate-200" placeholder="Ship landing page copy" />
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <label class="text-sm font-medium text-slate-700">Description</label>
           <Textarea
             v-model="props.form.description"
-            class="min-h-28 rounded-xl border-slate-200"
+            class="min-h-24 rounded-xl border-slate-200"
             placeholder="Optional notes, links, or context for the task"
           />
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="space-y-2">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1.5">
             <label class="text-sm font-medium text-slate-700">Priority</label>
             <Select v-model="props.form.priority">
-              <SelectTrigger class="h-11 w-full rounded-xl border-slate-200">
+              <SelectTrigger class="h-10 w-full rounded-xl border-slate-200">
                 <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
@@ -71,23 +71,23 @@ const emit = defineEmits<{
             </Select>
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <label class="text-sm font-medium text-slate-700">Deadline</label>
-            <Input v-model="props.form.deadline" class="h-11 rounded-xl border-slate-200" type="date" />
+            <Input v-model="props.form.deadline" class="h-10 rounded-xl border-slate-200" type="date" />
           </div>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <label class="text-sm font-medium text-slate-700">Group</label>
-          <Input v-model="props.form.group" class="h-11 rounded-xl border-slate-200" placeholder="Design, Ops, Personal" />
+          <Input v-model="props.form.group" class="h-10 rounded-xl border-slate-200" placeholder="Design, Ops, Personal" />
         </div>
 
-        <DialogFooter class="gap-2 sm:justify-end">
-          <Button type="button" class="rounded-xl" variant="outline" @click="emit('update:open', false)">
-            Cancel
-          </Button>
+        <DialogFooter class="gap-2 pt-1 sm:justify-end grid grid-cols-2">
           <Button type="submit" class="rounded-xl" :disabled="!props.canSubmit">
             {{ props.isEditing ? 'Save changes' : 'Create todo' }}
+          </Button>
+          <Button type="button" class="rounded-xl" variant="outline" @click="emit('update:open', false)">
+            Cancel
           </Button>
         </DialogFooter>
       </form>

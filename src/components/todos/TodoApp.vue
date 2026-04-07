@@ -187,8 +187,15 @@ async function handleOpenInTab() {
 }
 
 const isPopup = computed(() => props.mode === 'popup')
-const showExtensionControls = computed(() => props.mode !== 'web')
 const canSubmit = computed(() => form.value.title.trim().length > 0)
+const hasActiveFilters = computed(() =>
+  Boolean(search.value.trim())
+  || statusFilter.value !== 'all'
+  || priorityFilter.value !== 'all'
+  || deadlineFilter.value !== 'all'
+  || groupFilter.value !== 'all'
+  || groupBy.value !== 'group',
+)
 const dialogTitle = computed(() => (editingId.value ? 'Edit task' : 'Create task'))
 const dialogDescription = computed(() =>
   editingId.value
@@ -248,7 +255,7 @@ const expandedSections = computed({
 
 const containerClass = computed(() =>
   isPopup.value
-    ? 'mx-auto flex min-h-screen w-full max-w-[440px] flex-col gap-3 px-3 py-3'
+    ? 'mx-auto flex min-h-screen w-full max-w-[440px] flex-col gap-3 px-3 py-3 pt-5 pb-24'
     : 'mx-auto flex min-h-screen w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-5 lg:px-6 lg:py-8',
 )
 
@@ -263,27 +270,12 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
 
 <template>
   <div class="app-shell min-h-screen" :class="isPopup ? 'min-w-[390px]' : ''">
+    <Button v-if="props.mode === 'popup'" class="fixed left-1 top-1 z-40 rounded-full border-slate-200/80 bg-white/78 opacity-35 shadow-[0_12px_36px_-24px_rgba(15,23,42,0.45)] backdrop-blur transition-opacity hover:opacity-100 focus-visible:opacity-100" size="icon" variant="outline" aria-label="Open in tab" title="Open in tab" @click="handleOpenInTab">
+      <Icon class="size-4" icon="solar:square-arrow-right-up-linear" />
+    </Button>
+
     <div :class="containerClass">
-      <section
-        v-if="showExtensionControls"
-        class="rounded-[1.5rem] border border-white/70 bg-white/88 px-4 py-3 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur"
-      >
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm font-semibold text-slate-900">Easy Todos</p>
-            <p class="text-xs text-slate-500">
-              {{ props.mode === 'popup' ? 'Chrome popup' : 'Extension tab' }}
-            </p>
-          </div>
-
-          <Button v-if="props.mode === 'popup'" class="rounded-xl" variant="outline" @click="handleOpenInTab">
-            <Icon class="size-4" icon="solar:square-arrow-right-up-linear" />
-            Open in tab
-          </Button>
-        </div>
-      </section>
-
-      <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" />
+      <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" :compact="isPopup" />
 
       <div class="space-y-4">
         <TodoFilters
@@ -298,6 +290,8 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
           :priority-options="priorityOptions"
           :deadline-options="deadlineOptions"
           :group-by-options="groupByOptions"
+          :compact="isPopup"
+          :has-active-filters="hasActiveFilters"
           @update:search="search = $event"
           @update:status-filter="statusFilter = $event"
           @update:priority-filter="priorityFilter = $event"
@@ -308,14 +302,6 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
         />
 
         <main class="space-y-4">
-          <div class="flex flex-col gap-3 rounded-[1.75rem] border border-white/70 bg-white/88 px-4 py-3 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-            <p class="text-sm font-medium text-slate-900">{{ filteredTodos.length }} visible todos</p>
-            <Button class="rounded-xl" @click="openCreateDialog">
-              <Icon class="size-4" icon="solar:add-circle-linear" />
-              Add todo
-            </Button>
-          </div>
-
           <TodoSections
             v-if="groupedTodos.length"
             :sections="groupedTodos"
@@ -367,5 +353,16 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
       @update:open="dialogOpen = $event"
       @submit="saveTodo"
     />
+
+    <Button
+      v-if="isPopup"
+      class="fixed bottom-5 right-5 z-40 rounded-full shadow-[0_18px_40px_-18px_rgba(15,23,42,0.55)]"
+      size="icon-lg"
+      aria-label="Add todo"
+      title="Add todo"
+      @click="openCreateDialog"
+    >
+      <Icon class="size-5" icon="solar:add-circle-linear" />
+    </Button>
   </div>
 </template>
