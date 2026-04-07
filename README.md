@@ -1,5 +1,19 @@
-# Vue 3 + TypeScript + Vite
+# Easy Todos
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Todo app built with Vue 3, TypeScript, and Vite.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Keyboard Shortcuts
+
+- `n`: open the create todo dialog
+- `/`: focus the search input
+
+Notes:
+- Shortcuts are ignored while typing in inputs, textareas, selects, or editable content.
+- `n` is also ignored while the todo dialog is already open.
