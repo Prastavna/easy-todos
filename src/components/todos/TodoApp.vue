@@ -275,7 +275,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
     </Button>
 
     <div :class="containerClass">
-      <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" :compact="isPopup" />
+      <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" />
 
       <div class="space-y-4">
         <TodoFilters
@@ -290,7 +290,6 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
           :priority-options="priorityOptions"
           :deadline-options="deadlineOptions"
           :group-by-options="groupByOptions"
-          :compact="isPopup"
           :has-active-filters="hasActiveFilters"
           @update:search="search = $event"
           @update:status-filter="statusFilter = $event"

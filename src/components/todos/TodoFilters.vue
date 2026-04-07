@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Icon } from '@iconify/vue'
 
 import { Button } from '@/components/ui/button'
@@ -21,7 +20,6 @@ const props = defineProps<{
   priorityOptions: SelectOption<Priority>[]
   deadlineOptions: SelectOption<DeadlineFilter>[]
   groupByOptions: SelectOption<GroupBy>[]
-  compact?: boolean
   hasActiveFilters?: boolean
 }>()
 
@@ -68,25 +66,13 @@ function updateGroupBy(value: unknown) {
     emit('update:groupBy', value as GroupBy)
   }
 }
-
-const contentClass = computed(() =>
-  props.compact
-    ? 'space-y-4 px-0 py-0'
-    : 'space-y-4',
-)
-
-const cardClass = computed(() =>
-  props.compact
-    ? 'border-none bg-transparent shadow-none backdrop-blur-0 py-0'
-    : 'border-white/70 bg-white/88 shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] backdrop-blur py-0',
-)
 </script>
 
 <template>
-  <Card :class="cardClass">
-    <CardContent :class="contentClass">
-      <div :class="props.compact ? 'space-y-4' : 'flex flex-wrap items-end gap-3'">
-        <div :class="props.compact ? 'flex items-center gap-2' : 'min-w-[220px] flex-[1.6] space-y-2'">
+  <Card class="border-none bg-transparent py-0 shadow-none backdrop-blur-0 sm:border-white/70 sm:bg-white/88 sm:shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] sm:backdrop-blur">
+    <CardContent class="space-y-4 px-0 py-0 sm:px-6 sm:py-6">
+      <div class="space-y-4 sm:flex sm:flex-wrap sm:items-end sm:gap-3 sm:space-y-0">
+        <div class="flex items-center gap-2 sm:min-w-[220px] sm:flex-[1.6] sm:space-y-2">
           <div class="relative min-w-0 flex-1">
             <Icon class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" icon="solar:magnifer-linear" />
             <Input
@@ -97,7 +83,7 @@ const cardClass = computed(() =>
             />
           </div>
 
-          <DropdownMenu v-if="props.compact">
+          <DropdownMenu class="sm:hidden">
             <DropdownMenuTrigger as-child>
               <Button class="relative rounded-xl border-slate-200 bg-white" size="icon" variant="outline" aria-label="Open filters" title="Open filters">
                 <Icon class="size-4" icon="solar:tuning-2-linear" />
@@ -189,8 +175,7 @@ const cardClass = computed(() =>
           </DropdownMenu>
         </div>
 
-        <template v-if="!props.compact">
-          <div class="min-w-[150px] flex-1 space-y-2">
+        <div class="hidden min-w-[150px] flex-1 space-y-2 sm:block">
           <label class="text-sm font-medium text-slate-700">Status</label>
           <Select :model-value="props.statusFilter" @update:model-value="updateStatusFilter">
             <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -202,9 +187,9 @@ const cardClass = computed(() =>
               </SelectItem>
             </SelectContent>
           </Select>
-          </div>
+        </div>
 
-          <div class="min-w-[150px] flex-1 space-y-2">
+        <div class="hidden min-w-[150px] flex-1 space-y-2 sm:block">
             <label class="text-sm font-medium text-slate-700">Priority</label>
             <Select :model-value="props.priorityFilter" @update:model-value="updatePriorityFilter">
               <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -217,9 +202,9 @@ const cardClass = computed(() =>
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+        </div>
 
-          <div class="min-w-[150px] flex-1 space-y-2">
+        <div class="hidden min-w-[150px] flex-1 space-y-2 sm:block">
             <label class="text-sm font-medium text-slate-700">Deadline</label>
             <Select :model-value="props.deadlineFilter" @update:model-value="updateDeadlineFilter">
               <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -231,9 +216,9 @@ const cardClass = computed(() =>
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+        </div>
 
-          <div class="min-w-[150px] flex-1 space-y-2">
+        <div class="hidden min-w-[150px] flex-1 space-y-2 sm:block">
             <label class="text-sm font-medium text-slate-700">Group</label>
             <Select :model-value="props.groupFilter" @update:model-value="updateGroupFilter">
               <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -246,9 +231,9 @@ const cardClass = computed(() =>
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+        </div>
 
-          <div class="min-w-[150px] flex-1 space-y-2">
+        <div class="hidden min-w-[150px] flex-1 space-y-2 sm:block">
             <label class="text-sm font-medium text-slate-700">Group list by</label>
             <Select :model-value="props.groupBy" @update:model-value="updateGroupBy">
               <SelectTrigger class="h-11 w-full rounded-xl border-slate-200 bg-white">
@@ -260,14 +245,13 @@ const cardClass = computed(() =>
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+        </div>
 
-          <div class="min-w-[140px] sm:ml-auto">
+        <div class="hidden min-w-[140px] sm:ml-auto sm:block">
             <Button class="h-11 w-full rounded-xl px-4 sm:w-auto" variant="outline" @click="emit('reset')">
               Reset filters
             </Button>
-          </div>
-        </template>
+        </div>
       </div>
     </CardContent>
   </Card>
