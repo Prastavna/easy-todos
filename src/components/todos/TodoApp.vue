@@ -322,7 +322,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
                 <Icon class="size-8" icon="solar:notes-minimalistic-bold-duotone" />
               </div>
               <div class="space-y-2">
-                <h2 class="font-display text-3xl text-slate-900">Nothing matches yet</h2>
+                <h2 class="text-3xl text-slate-900">Nothing matches yet</h2>
                 <p class="mx-auto max-w-md text-sm leading-6 text-slate-500">
                   Add your first task or reset the filters to bring hidden todos back into view.
                 </p>
@@ -354,7 +354,6 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
     />
 
     <Button
-      v-if="isPopup"
       class="fixed bottom-5 right-5 z-40 rounded-full shadow-[0_18px_40px_-18px_rgba(15,23,42,0.55)]"
       size="icon-lg"
       aria-label="Add todo"

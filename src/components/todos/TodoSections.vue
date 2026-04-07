@@ -50,14 +50,14 @@ const emit = defineEmits<{
       </AccordionTrigger>
 
       <AccordionContent class="pb-1">
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4 px-2 pb-3">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-2 px-2 pb-3">
           <Card
             v-for="todo in section.items"
             :key="todo.id"
-            class="border-white/80 bg-white/92 shadow-[0_16px_60px_-44px_rgba(15,23,42,0.55)] transition-transform duration-200 hover:-translate-y-0.5"
+            class="border-white/80 bg-white/92 shadow-[0_16px_60px_-44px_rgba(15,23,42,0.55)]"
           >
-            <CardHeader class="gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div class="min-w-0 space-y-3">
+            <CardHeader class="gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
                   <Badge :class="props.getPriorityTone(todo.priority)">
                     {{ todo.priority }} priority
@@ -73,7 +73,7 @@ const emit = defineEmits<{
                   <CardTitle class="text-xl text-slate-900" :class="todo.completed ? 'line-through opacity-55' : ''">
                     {{ todo.title }}
                   </CardTitle>
-                  <CardDescription v-if="todo.description" class="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+                  <CardDescription v-if="todo.description" class="max-w-xl text-sm leading-6 text-slate-600">
                     {{ todo.description }}
                   </CardDescription>
                 </div>
@@ -81,32 +81,32 @@ const emit = defineEmits<{
             </CardHeader>
 
             <CardContent class="space-y-3">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500 sm:max-w-[60%]">
-                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
-                    <Icon class="size-4 text-slate-500" icon="solar:calendar-mark-linear" />
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex min-w-0 items-center gap-2 text-xs text-slate-500">
+                  <span v-if="todo.deadline" class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 whitespace-nowrap">
+                    <Icon class="size-3.5 shrink-0 text-slate-500" icon="solar:calendar-mark-linear" />
                     {{ props.getDeadlineLabel(todo) }}
                   </span>
-                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
-                    <Icon class="size-4 text-slate-500" icon="solar:clock-circle-linear" />
-                    Updated {{ props.formatUpdatedAt(todo.updatedAt) }}
-                  </span>
+                  <!-- <span class="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 whitespace-nowrap"> -->
+                  <!--   <Icon class="size-3.5 shrink-0 text-slate-500" icon="solar:clock-circle-linear" /> -->
+                  <!--   Updated {{ props.formatUpdatedAt(todo.updatedAt) }} -->
+                  <!-- </span> -->
                 </div>
 
-                <div class="flex shrink-0 items-center justify-end gap-2">
+                <div class="flex shrink-0 items-center justify-end gap-1.5">
                   <Button
-                    class="rounded-full"
+                    class="size-8 rounded-full"
                     size="icon"
                     :variant="todo.completed ? 'secondary' : 'outline'"
                     @click="emit('toggle', todo.id)"
                   >
-                    <Icon :icon="todo.completed ? 'solar:check-circle-bold' : 'solar:check-circle-linear'" class="size-5" />
+                    <Icon :icon="todo.completed ? 'solar:check-circle-bold' : 'solar:check-circle-linear'" class="size-4" />
                   </Button>
-                  <Button class="rounded-full" size="icon" variant="outline" aria-label="Edit todo" title="Edit todo" @click="emit('edit', todo)">
-                    <Icon class="size-4" icon="solar:pen-linear" />
+                  <Button class="size-8 rounded-full" size="icon" variant="outline" aria-label="Edit todo" title="Edit todo" @click="emit('edit', todo)">
+                    <Icon class="size-3.5" icon="solar:pen-linear" />
                   </Button>
-                  <Button class="rounded-full" size="icon" variant="destructive" aria-label="Delete todo" title="Delete todo" @click="emit('remove', todo.id)">
-                    <Icon class="size-4" icon="solar:trash-bin-trash-linear" />
+                  <Button class="size-8 rounded-full" size="icon" variant="destructive" aria-label="Delete todo" title="Delete todo" @click="emit('remove', todo.id)">
+                    <Icon class="size-3.5" icon="solar:trash-bin-trash-linear" />
                   </Button>
                 </div>
               </div>
