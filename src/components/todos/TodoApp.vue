@@ -350,7 +350,7 @@ watch([statusFilter, priorityFilter, deadlineFilter, groupFilter, groupBy], save
 </script>
 
 <template>
-  <div class="app-shell min-h-150" :class="isPopup ? 'min-w-97.5' : ''">
+  <div class="min-h-150" :class="isPopup ? 'min-w-97.5' : ''">
     <Button
       v-if="props.mode === 'popup'"
       class="fixed left-1 top-1 z-40 rounded-full border-slate-200/80 bg-white/78 opacity-35 shadow-[0_12px_36px_-24px_rgba(15,23,42,0.45)] backdrop-blur transition-opacity hover:opacity-100 focus-visible:opacity-100"

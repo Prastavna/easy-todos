@@ -61,7 +61,7 @@ function visibleItems(section: TodoSection) {
       <AccordionTrigger class="px-3 py-1.5 hover:no-underline">
         <div class="flex min-w-0 flex-1 items-center gap-3">
           <div class="min-w-0 text-left flex flex-row items-center">
-            <h2 class="truncate font-display text-lg text-slate-900">
+            <h2 class="truncate text-lg text-slate-900">
               {{ section.label }}
             </h2>
             <p class="pl-1 text-xs text-slate-500">
@@ -122,7 +122,7 @@ function visibleItems(section: TodoSection) {
             <!-- Text content — right padding makes room for the floating buttons -->
             <div class="space-y-1.5 px-3 py-2.5">
               <p
-                class="pr-26 text-sm font-medium leading-snug text-slate-900"
+                class="pr-26 text-sm font-medium leading-snug text-slate-900 wrap-break-word"
                 :class="todo.completed ? 'line-through opacity-55' : ''"
               >
                 {{ todo.title }}

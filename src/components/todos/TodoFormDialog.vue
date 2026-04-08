@@ -41,7 +41,7 @@ const emit = defineEmits<{
       class="max-h-[calc(100vh-1.5rem)] overflow-y-auto border-white/70 bg-white/96 p-4 sm:max-w-xl sm:p-5"
     >
       <DialogHeader class="gap-1">
-        <DialogTitle class="font-display text-2xl text-slate-900 sm:text-3xl">
+        <DialogTitle class="text-2xl text-slate-900 sm:text-3xl">
           {{ props.title }}
         </DialogTitle>
         <DialogDescription class="hidden sm:block">

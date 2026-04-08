@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: "Quicksand", "Segoe UI", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -116,9 +117,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+  button, [role="button"] {
+    cursor: pointer;
+  }
   body {
     @apply bg-background text-foreground;
-    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
     min-height: 100vh;
     background-color: rgba(247, 243, 234, 0.96);
   }
@@ -128,11 +131,8 @@
   }
 }
 
-.app-shell {
-}
-
-.font-display {
-  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+body {
+  font-family: "Quicksand", "Segoe UI", sans-serif;
 }
 
 html {
