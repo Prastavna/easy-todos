@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 
+import PriorityIcon from "./PriorityIcon.vue";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -160,8 +162,12 @@ function updateGroupBy(value: unknown) {
                       v-for="option in props.priorityOptions"
                       :key="option.value"
                       :value="option.value"
-                      >{{ option.label }}</SelectItem
                     >
+                      <span class="flex items-center gap-1.5">
+                        <PriorityIcon :priority="option.value" class="size-3" />
+                        {{ option.label }}
+                      </span>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -249,8 +255,12 @@ function updateGroupBy(value: unknown) {
                 v-for="option in props.priorityOptions"
                 :key="option.value"
                 :value="option.value"
-                >{{ option.label }}</SelectItem
               >
+                <span class="flex items-center gap-1.5">
+                  <PriorityIcon :priority="option.value" class="size-3" />
+                  {{ option.label }}
+                </span>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>

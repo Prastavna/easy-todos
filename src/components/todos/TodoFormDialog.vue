@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { Priority, SelectOption, TodoForm } from "@/lib/todos";
+import PriorityIcon from "./PriorityIcon.vue";
 
 const props = defineProps<{
   open: boolean;
@@ -83,7 +84,10 @@ const emit = defineEmits<{
                   :key="option.value"
                   :value="option.value"
                 >
-                  {{ option.label }}
+                  <span class="flex items-center gap-1.5">
+                    <PriorityIcon :priority="option.value" class="size-3" />
+                    {{ option.label }}
+                  </span>
                 </SelectItem>
               </SelectContent>
             </Select>

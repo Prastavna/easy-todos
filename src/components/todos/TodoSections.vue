@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import type { GroupBy, Priority, Todo, TodoSection } from "@/lib/todos";
+import PriorityIcon from "./PriorityIcon.vue";
 
 const props = defineProps<{
   sections: TodoSection[];
@@ -131,9 +132,12 @@ function visibleItems(section: TodoSection) {
                 {{ todo.description }}
               </p>
               <div class="flex flex-wrap items-center gap-1">
-                <Badge :class="props.getPriorityTone(todo.priority)"
-                  >{{ todo.priority }} priority</Badge
+                <Badge
+                  :class="[props.getPriorityTone(todo.priority), 'px-1.5']"
+                  :title="`${todo.priority} priority`"
                 >
+                  <PriorityIcon :priority="todo.priority" class="size-3.5" />
+                </Badge>
                 <!-- <Badge :class="props.getStatusTone(todo)">{{ todo.completed ? 'completed' : 'active' }}</Badge> -->
                 <Badge
                   v-if="props.groupBy !== 'group'"
