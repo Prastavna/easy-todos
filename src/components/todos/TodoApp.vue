@@ -288,7 +288,7 @@ const expandedSections = computed({
 
 const containerClass = computed(() =>
   isPopup.value
-    ? 'mx-auto flex min-h-screen w-full max-w-[440px] flex-col gap-3 px-3 py-3 pt-5 pb-24'
+    ? 'mx-auto flex min-h-screen w-full max-w-[440px] flex-col gap-2 px-3 py-2 pt-3 pb-14'
     : 'mx-auto flex min-h-screen w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-5 lg:px-6 lg:py-8',
 )
 
@@ -315,7 +315,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
     <div :class="containerClass">
       <TodoStats :active-count="activeCount" :due-today-count="dueTodayCount" :overdue-count="overdueCount" />
 
-      <div class="space-y-4">
+      <div class="space-y-2">
         <TodoFilters
           :search="search"
           :status-filter="statusFilter"
@@ -338,7 +338,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
           @reset="clearFilters"
         />
 
-        <main class="space-y-4">
+        <main class="space-y-2">
           <TodoSections
             v-if="groupedTodos.length"
             :sections="groupedTodos"

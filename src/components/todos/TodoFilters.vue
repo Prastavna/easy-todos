@@ -71,8 +71,8 @@ function updateGroupBy(value: unknown) {
 <template>
   <Card class="border-none bg-transparent py-0 shadow-none backdrop-blur-0 sm:border-white/70 sm:bg-white/88 sm:shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] sm:backdrop-blur">
     <CardContent class="space-y-4 px-0 py-0 sm:px-6 sm:py-6">
-      <div class="space-y-4 sm:flex sm:flex-wrap sm:items-end sm:gap-3 sm:space-y-0">
-        <div class="flex items-center gap-2 sm:min-w-[220px] sm:flex-[1.6] sm:space-y-2">
+      <div class="sm:flex sm:flex-wrap sm:items-end sm:gap-3 sm:space-y-0">
+        <div class="flex items-center gap-2 sm:min-w-55 sm:flex-[1.6] sm:space-y-2">
           <div class="relative min-w-0 flex-1">
             <Icon class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" icon="solar:magnifer-linear" />
             <Input
