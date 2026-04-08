@@ -1,34 +1,34 @@
-import { mount } from '@vue/test-utils'
-import { defineComponent, nextTick } from 'vue'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { mount } from "@vue/test-utils";
+import { defineComponent, nextTick } from "vue";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { openAppInTab } from '@/lib/extension'
-import type { Todo } from '@/lib/todos'
+import { openAppInTab } from "@/lib/extension";
+import type { Todo } from "@/lib/todos";
 
-vi.mock('@/lib/extension', () => ({
+vi.mock("@/lib/extension", () => ({
   openAppInTab: vi.fn(),
-}))
+}));
 
-import TodoApp from '@/components/todos/TodoApp.vue'
+import TodoApp from "@/components/todos/TodoApp.vue";
 
 const ButtonStub = defineComponent({
-  name: 'Button',
-  emits: ['click'],
+  name: "Button",
+  emits: ["click"],
   template: '<button v-bind="$attrs" @click="$emit(\'click\', $event)"><slot /></button>',
-})
+});
 
 const TodoStatsStub = defineComponent({
-  name: 'TodoStats',
+  name: "TodoStats",
   props: {
     activeCount: { type: Number, required: true },
     dueTodayCount: { type: Number, required: true },
     overdueCount: { type: Number, required: true },
   },
   template: '<div data-test="stats">{{ activeCount }}|{{ dueTodayCount }}|{{ overdueCount }}</div>',
-})
+});
 
 const TodoFiltersStub = defineComponent({
-  name: 'TodoFilters',
+  name: "TodoFilters",
   props: {
     search: { type: String, required: true },
     statusFilter: { type: String, required: true },
@@ -38,14 +38,22 @@ const TodoFiltersStub = defineComponent({
     groupBy: { type: String, required: true },
     hasActiveFilters: { type: Boolean, default: false },
   },
-  emits: ['update:search', 'update:statusFilter', 'update:priorityFilter', 'update:deadlineFilter', 'update:groupFilter', 'update:groupBy', 'reset'],
+  emits: [
+    "update:search",
+    "update:statusFilter",
+    "update:priorityFilter",
+    "update:deadlineFilter",
+    "update:groupFilter",
+    "update:groupBy",
+    "reset",
+  ],
   setup(props, { emit }) {
     return {
       props,
-      emitSearch: () => emit('update:search', 'alpha'),
-      emitStatus: () => emit('update:statusFilter', 'completed'),
-      emitReset: () => emit('reset'),
-    }
+      emitSearch: () => emit("update:search", "alpha"),
+      emitStatus: () => emit("update:statusFilter", "completed"),
+      emitReset: () => emit("reset"),
+    };
   },
   template: `
     <div
@@ -64,33 +72,33 @@ const TodoFiltersStub = defineComponent({
       <button data-test="filters-reset" @click="emitReset">reset</button>
     </div>
   `,
-})
+});
 
 const TodoSectionsStub = defineComponent({
-  name: 'TodoSections',
+  name: "TodoSections",
   props: {
     sections: { type: Array, required: true },
     expandedSections: { type: Array, required: true },
   },
-  emits: ['update:expandedSections', 'toggle', 'edit', 'remove'],
+  emits: ["update:expandedSections", "toggle", "edit", "remove"],
   setup(props, { emit }) {
-    const firstTodo = () => (props.sections as Array<{ items: Todo[] }>)[0]?.items[0]
+    const firstTodo = () => (props.sections as Array<{ items: Todo[] }>)[0]?.items[0];
     return {
       props,
       toggleFirst: () => {
-        const todo = firstTodo()
-        if (todo) emit('toggle', todo.id)
+        const todo = firstTodo();
+        if (todo) emit("toggle", todo.id);
       },
       editFirst: () => {
-        const todo = firstTodo()
-        if (todo) emit('edit', todo)
+        const todo = firstTodo();
+        if (todo) emit("edit", todo);
       },
       removeFirst: () => {
-        const todo = firstTodo()
-        if (todo) emit('remove', todo.id)
+        const todo = firstTodo();
+        if (todo) emit("remove", todo.id);
       },
-      collapseAll: () => emit('update:expandedSections', []),
-    }
+      collapseAll: () => emit("update:expandedSections", []),
+    };
   },
   template: `
     <div data-test="sections">
@@ -104,10 +112,10 @@ const TodoSectionsStub = defineComponent({
       <button data-test="collapse-all" @click="collapseAll">collapse</button>
     </div>
   `,
-})
+});
 
 const TodoFormDialogStub = defineComponent({
-  name: 'TodoFormDialog',
+  name: "TodoFormDialog",
   props: {
     open: { type: Boolean, required: true },
     title: { type: String, required: true },
@@ -116,25 +124,25 @@ const TodoFormDialogStub = defineComponent({
     canSubmit: { type: Boolean, required: true },
     isEditing: { type: Boolean, required: true },
   },
-  emits: ['update:open', 'submit'],
+  emits: ["update:open", "submit"],
   setup(props, { emit }) {
     return {
       props,
-      closeDialog: () => emit('update:open', false),
-      submitDialog: () => emit('submit'),
+      closeDialog: () => emit("update:open", false),
+      submitDialog: () => emit("submit"),
       setCreateValues: () => {
-        const form = props.form as Todo
-        form.title = 'Alpha task'
-        form.description = 'Created from test'
-        form.priority = 'high'
-        form.deadline = '2026-04-08'
-        form.group = 'Ops'
+        const form = props.form as Todo;
+        form.title = "Alpha task";
+        form.description = "Created from test";
+        form.priority = "high";
+        form.deadline = "2026-04-08";
+        form.group = "Ops";
       },
       setEditedTitle: () => {
-        const form = props.form as Todo
-        form.title = 'Alpha task updated'
+        const form = props.form as Todo;
+        form.title = "Alpha task updated";
       },
-    }
+    };
   },
   template: `
     <div
@@ -152,7 +160,7 @@ const TodoFormDialogStub = defineComponent({
       <button data-test="dialog-fill-edit" @click="setEditedTitle">fill-edit</button>
     </div>
   `,
-})
+});
 
 const stubs = {
   TodoStats: TodoStatsStub,
@@ -160,236 +168,253 @@ const stubs = {
   TodoSections: TodoSectionsStub,
   TodoFormDialog: TodoFormDialogStub,
   Button: ButtonStub,
-  Card: { template: '<div><slot /></div>' },
-  CardContent: { template: '<div><slot /></div>' },
-  Icon: { template: '<i />' },
-}
+  Card: { template: "<div><slot /></div>" },
+  CardContent: { template: "<div><slot /></div>" },
+  Icon: { template: "<i />" },
+};
 
 function createTodo(overrides: Partial<Todo> = {}): Todo {
   return {
-    id: 'todo-1',
-    title: 'Alpha task',
-    description: 'First task',
-    priority: 'medium',
-    deadline: '',
-    group: 'General',
+    id: "todo-1",
+    title: "Alpha task",
+    description: "First task",
+    priority: "medium",
+    deadline: "",
+    group: "General",
     completed: false,
-    createdAt: '2026-04-07T10:00:00.000Z',
-    updatedAt: '2026-04-07T10:00:00.000Z',
+    createdAt: "2026-04-07T10:00:00.000Z",
+    updatedAt: "2026-04-07T10:00:00.000Z",
     ...overrides,
-  }
+  };
 }
 
-async function mountTodoApp(mode: 'web' | 'popup' | 'tab' = 'tab') {
+async function mountTodoApp(mode: "web" | "popup" | "tab" = "tab") {
   const wrapper = mount(TodoApp, {
     attachTo: document.body,
     props: { mode },
     global: { stubs },
-  })
+  });
 
-  await nextTick()
+  await nextTick();
 
-  return wrapper
+  return wrapper;
 }
 
-describe('TodoApp', () => {
+describe("TodoApp", () => {
   beforeEach(() => {
-    localStorage.clear()
-    vi.spyOn(crypto, 'randomUUID').mockReturnValue('11111111-1111-1111-1111-111111111111')
-  })
+    localStorage.clear();
+    vi.spyOn(crypto, "randomUUID").mockReturnValue("11111111-1111-1111-1111-111111111111");
+  });
 
   afterEach(() => {
-    vi.restoreAllMocks()
-    vi.mocked(openAppInTab).mockReset()
-    document.body.innerHTML = ''
-    localStorage.clear()
-  })
+    vi.restoreAllMocks();
+    vi.mocked(openAppInTab).mockReset();
+    document.body.innerHTML = "";
+    localStorage.clear();
+  });
 
-  it('loads todos from localStorage and passes them to sections', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Loaded one', group: 'Ops' }),
-      createTodo({ id: '2', title: 'Loaded two', group: 'Ops' }),
-    ]))
+  it("loads todos from localStorage and passes them to sections", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([
+        createTodo({ id: "1", title: "Loaded one", group: "Ops" }),
+        createTodo({ id: "2", title: "Loaded two", group: "Ops" }),
+      ]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Loaded one')
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Loaded two')
-  })
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Loaded one");
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Loaded two");
+  });
 
-  it('shows stats derived from loaded todos', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Active', deadline: '2026-04-07' }),
-      createTodo({ id: '2', title: 'Overdue', deadline: '2026-04-06' }),
-      createTodo({ id: '3', title: 'Done', completed: true, deadline: '2026-04-07' }),
-    ]))
+  it("shows stats derived from loaded todos", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([
+        createTodo({ id: "1", title: "Active", deadline: "2026-04-07" }),
+        createTodo({ id: "2", title: "Overdue", deadline: "2026-04-06" }),
+        createTodo({ id: "3", title: "Done", completed: true, deadline: "2026-04-07" }),
+      ]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    expect(wrapper.get('[data-test="stats"]').text()).toBe('2|1|1')
-  })
+    expect(wrapper.get('[data-test="stats"]').text()).toBe("2|1|1");
+  });
 
-  it('opens the create dialog from the floating button', async () => {
-    const wrapper = await mountTodoApp()
+  it("opens the create dialog from the floating button", async () => {
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[aria-label="Add todo"]').trigger('click')
+    await wrapper.get('[aria-label="Add todo"]').trigger("click");
 
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-open')).toBe('true')
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-title')).toBe('Create task')
-  })
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-open")).toBe("true");
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-title")).toBe("Create task");
+  });
 
-  it('creates a new todo and persists it', async () => {
-    const wrapper = await mountTodoApp()
+  it("creates a new todo and persists it", async () => {
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[aria-label="Add todo"]').trigger('click')
-    await wrapper.get('[data-test="dialog-fill-create"]').trigger('click')
-    await wrapper.get('[data-test="dialog-submit"]').trigger('click')
+    await wrapper.get('[aria-label="Add todo"]').trigger("click");
+    await wrapper.get('[data-test="dialog-fill-create"]').trigger("click");
+    await wrapper.get('[data-test="dialog-submit"]').trigger("click");
 
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Alpha task')
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Alpha task");
 
-    const saved = JSON.parse(localStorage.getItem('easy-todos.todos') || '[]')
-    expect(saved).toHaveLength(1)
+    const saved = JSON.parse(localStorage.getItem("easy-todos.todos") || "[]");
+    expect(saved).toHaveLength(1);
     expect(saved[0]).toMatchObject({
-      id: '11111111-1111-1111-1111-111111111111',
-      title: 'Alpha task',
-      priority: 'high',
-      deadline: '2026-04-08',
-      group: 'Ops',
-    })
-  })
+      id: "11111111-1111-1111-1111-111111111111",
+      title: "Alpha task",
+      priority: "high",
+      deadline: "2026-04-08",
+      group: "Ops",
+    });
+  });
 
-  it('edits an existing todo', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Original title' }),
-    ]))
+  it("edits an existing todo", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([createTodo({ id: "1", title: "Original title" })]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[data-test="edit-first"]').trigger('click')
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-editing')).toBe('true')
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-form-title')).toBe('Original title')
+    await wrapper.get('[data-test="edit-first"]').trigger("click");
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-editing")).toBe("true");
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-form-title")).toBe(
+      "Original title",
+    );
 
-    await wrapper.get('[data-test="dialog-fill-edit"]').trigger('click')
-    await wrapper.get('[data-test="dialog-submit"]').trigger('click')
+    await wrapper.get('[data-test="dialog-fill-edit"]').trigger("click");
+    await wrapper.get('[data-test="dialog-submit"]').trigger("click");
 
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Alpha task updated')
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Alpha task updated");
 
-    const saved = JSON.parse(localStorage.getItem('easy-todos.todos') || '[]')
-    expect(saved[0]?.title).toBe('Alpha task updated')
-  })
+    const saved = JSON.parse(localStorage.getItem("easy-todos.todos") || "[]");
+    expect(saved[0]?.title).toBe("Alpha task updated");
+  });
 
-  it('toggles a todo completion state', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Toggle me', completed: false }),
-    ]))
+  it("toggles a todo completion state", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([createTodo({ id: "1", title: "Toggle me", completed: false })]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[data-test="toggle-first"]').trigger('click')
+    await wrapper.get('[data-test="toggle-first"]').trigger("click");
 
-    const saved = JSON.parse(localStorage.getItem('easy-todos.todos') || '[]')
-    expect(saved[0]?.completed).toBe(true)
-  })
+    const saved = JSON.parse(localStorage.getItem("easy-todos.todos") || "[]");
+    expect(saved[0]?.completed).toBe(true);
+  });
 
-  it('removes a todo', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Delete me' }),
-    ]))
+  it("removes a todo", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([createTodo({ id: "1", title: "Delete me" })]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[data-test="remove-first"]').trigger('click')
+    await wrapper.get('[data-test="remove-first"]').trigger("click");
 
-    expect(wrapper.text()).toContain('Nothing matches yet')
-    expect(JSON.parse(localStorage.getItem('easy-todos.todos') || '[]')).toHaveLength(0)
-  })
+    expect(wrapper.text()).toContain("Nothing matches yet");
+    expect(JSON.parse(localStorage.getItem("easy-todos.todos") || "[]")).toHaveLength(0);
+  });
 
-  it('filters todos from filter events and resets them', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Alpha task' }),
-      createTodo({ id: '2', title: 'Beta task' }),
-    ]))
+  it("filters todos from filter events and resets them", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([
+        createTodo({ id: "1", title: "Alpha task" }),
+        createTodo({ id: "2", title: "Beta task" }),
+      ]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[data-test="filters-search"]').trigger('click')
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Alpha task')
-    expect(wrapper.get('[data-test="sections"]').text()).not.toContain('Beta task')
-    expect(wrapper.get('[data-test="filters"]').attributes('data-active')).toBe('true')
+    await wrapper.get('[data-test="filters-search"]').trigger("click");
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Alpha task");
+    expect(wrapper.get('[data-test="sections"]').text()).not.toContain("Beta task");
+    expect(wrapper.get('[data-test="filters"]').attributes("data-active")).toBe("true");
 
-    await wrapper.get('[data-test="filters-reset"]').trigger('click')
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Alpha task')
-    expect(wrapper.get('[data-test="sections"]').text()).toContain('Beta task')
-    expect(wrapper.get('[data-test="filters"]').attributes('data-search')).toBe('')
-  })
+    await wrapper.get('[data-test="filters-reset"]').trigger("click");
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Alpha task");
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Beta task");
+    expect(wrapper.get('[data-test="filters"]').attributes("data-search")).toBe("");
+  });
 
-  it('updates filter props when status changes', async () => {
-    const wrapper = await mountTodoApp()
+  it("updates filter props when status changes", async () => {
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[data-test="filters-status"]').trigger('click')
+    await wrapper.get('[data-test="filters-status"]').trigger("click");
 
-    expect(wrapper.get('[data-test="filters"]').attributes('data-status')).toBe('completed')
-    expect(wrapper.get('[data-test="filters"]').attributes('data-active')).toBe('true')
-  })
+    expect(wrapper.get('[data-test="filters"]').attributes("data-status")).toBe("completed");
+    expect(wrapper.get('[data-test="filters"]').attributes("data-active")).toBe("true");
+  });
 
-  it('stores collapsed section state when sections emit expanded updates', async () => {
-    localStorage.setItem('easy-todos.todos', JSON.stringify([
-      createTodo({ id: '1', title: 'Alpha task', group: 'General' }),
-    ]))
+  it("stores collapsed section state when sections emit expanded updates", async () => {
+    localStorage.setItem(
+      "easy-todos.todos",
+      JSON.stringify([createTodo({ id: "1", title: "Alpha task", group: "General" })]),
+    );
 
-    const wrapper = await mountTodoApp()
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[data-test="collapse-all"]').trigger('click')
+    await wrapper.get('[data-test="collapse-all"]').trigger("click");
 
-    expect(JSON.parse(localStorage.getItem('easy-todos.section-collapse') || '{}')).toEqual({
-      'group:general': true,
-    })
-  })
+    expect(JSON.parse(localStorage.getItem("easy-todos.section-collapse") || "{}")).toEqual({
+      "group:general": true,
+    });
+  });
 
-  it('opens the create dialog when pressing n outside typing contexts', async () => {
-    const wrapper = await mountTodoApp()
+  it("opens the create dialog when pressing n outside typing contexts", async () => {
+    const wrapper = await mountTodoApp();
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'n' }))
-    await wrapper.vm.$nextTick()
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "n" }));
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-open')).toBe('true')
-  })
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-open")).toBe("true");
+  });
 
-  it('does not open the dialog for n while typing in the search input', async () => {
-    const wrapper = await mountTodoApp()
-    const input = wrapper.get('#todo-search')
+  it("does not open the dialog for n while typing in the search input", async () => {
+    const wrapper = await mountTodoApp();
+    const input = wrapper.get("#todo-search");
 
-    input.element.dispatchEvent(new KeyboardEvent('keydown', { key: 'n', bubbles: true }))
-    await wrapper.vm.$nextTick()
+    input.element.dispatchEvent(new KeyboardEvent("keydown", { key: "n", bubbles: true }));
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-open')).toBe('false')
-  })
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-open")).toBe("false");
+  });
 
-  it('focuses the search input when pressing /', async () => {
-    const wrapper = await mountTodoApp()
+  it("focuses the search input when pressing /", async () => {
+    const wrapper = await mountTodoApp();
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: '/' }))
-    await wrapper.vm.$nextTick()
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "/" }));
+    await wrapper.vm.$nextTick();
 
-    expect((document.activeElement as HTMLElement | null)?.id).toBe('todo-search')
-  })
+    expect((document.activeElement as HTMLElement | null)?.id).toBe("todo-search");
+  });
 
-  it('ignores n when the dialog is already open', async () => {
-    const wrapper = await mountTodoApp()
+  it("ignores n when the dialog is already open", async () => {
+    const wrapper = await mountTodoApp();
 
-    await wrapper.get('[aria-label="Add todo"]').trigger('click')
-    await wrapper.get('[data-test="dialog-fill-edit"]').trigger('click')
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'n' }))
-    await wrapper.vm.$nextTick()
+    await wrapper.get('[aria-label="Add todo"]').trigger("click");
+    await wrapper.get('[data-test="dialog-fill-edit"]').trigger("click");
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "n" }));
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper.get('[data-test="dialog"]').attributes('data-form-title')).toBe('Alpha task updated')
-  })
+    expect(wrapper.get('[data-test="dialog"]').attributes("data-form-title")).toBe(
+      "Alpha task updated",
+    );
+  });
 
-  it('opens the extension in a tab from popup mode', async () => {
-    const wrapper = await mountTodoApp('popup')
+  it("opens the extension in a tab from popup mode", async () => {
+    const wrapper = await mountTodoApp("popup");
 
-    await wrapper.get('[aria-label="Open in tab"]').trigger('click')
+    await wrapper.get('[aria-label="Open in tab"]').trigger("click");
 
-    expect(openAppInTab).toHaveBeenCalledTimes(1)
-  })
-})
+    expect(openAppInTab).toHaveBeenCalledTimes(1);
+  });
+});

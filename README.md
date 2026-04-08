@@ -15,5 +15,6 @@ npm run dev
 - `/`: focus the search input
 
 Notes:
+
 - Shortcuts are ignored while typing in inputs, textareas, selects, or editable content.
 - `n` is also ignored while the todo dialog is already open.

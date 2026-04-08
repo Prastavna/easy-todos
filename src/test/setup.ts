@@ -1,5 +1,5 @@
-import { config } from '@vue/test-utils'
+import { config } from "@vue/test-utils";
 
 config.global.stubs = {
   teleport: true,
-}
+};

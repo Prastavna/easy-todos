@@ -1,82 +1,97 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+import { Icon } from "@iconify/vue";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { DeadlineFilter, GroupBy, Priority, SelectOption, StatusFilter } from '@/lib/todos'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { DeadlineFilter, GroupBy, Priority, SelectOption, StatusFilter } from "@/lib/todos";
 
 const props = defineProps<{
-  search: string
-  statusFilter: StatusFilter
-  priorityFilter: 'all' | Priority
-  deadlineFilter: DeadlineFilter
-  groupFilter: string
-  groupBy: GroupBy
-  availableGroups: string[]
-  statusOptions: SelectOption<StatusFilter>[]
-  priorityOptions: SelectOption<Priority>[]
-  deadlineOptions: SelectOption<DeadlineFilter>[]
-  groupByOptions: SelectOption<GroupBy>[]
-  hasActiveFilters?: boolean
-  showAddButton?: boolean
-}>()
+  search: string;
+  statusFilter: StatusFilter;
+  priorityFilter: "all" | Priority;
+  deadlineFilter: DeadlineFilter;
+  groupFilter: string;
+  groupBy: GroupBy;
+  availableGroups: string[];
+  statusOptions: SelectOption<StatusFilter>[];
+  priorityOptions: SelectOption<Priority>[];
+  deadlineOptions: SelectOption<DeadlineFilter>[];
+  groupByOptions: SelectOption<GroupBy>[];
+  hasActiveFilters?: boolean;
+  showAddButton?: boolean;
+}>();
 
 const emit = defineEmits<{
-  'update:search': [value: string]
-  'update:statusFilter': [value: StatusFilter]
-  'update:priorityFilter': [value: 'all' | Priority]
-  'update:deadlineFilter': [value: DeadlineFilter]
-  'update:groupFilter': [value: string]
-  'update:groupBy': [value: GroupBy]
-  reset: []
-  add: []
-}>()
+  "update:search": [value: string];
+  "update:statusFilter": [value: StatusFilter];
+  "update:priorityFilter": [value: "all" | Priority];
+  "update:deadlineFilter": [value: DeadlineFilter];
+  "update:groupFilter": [value: string];
+  "update:groupBy": [value: GroupBy];
+  reset: [];
+  add: [];
+}>();
 
 function updateSearch(value: string | number) {
-  emit('update:search', String(value))
+  emit("update:search", String(value));
 }
 
 function updateStatusFilter(value: unknown) {
-  if (typeof value === 'string') {
-    emit('update:statusFilter', value as StatusFilter)
+  if (typeof value === "string") {
+    emit("update:statusFilter", value as StatusFilter);
   }
 }
 
 function updatePriorityFilter(value: unknown) {
-  if (typeof value === 'string') {
-    emit('update:priorityFilter', value as 'all' | Priority)
+  if (typeof value === "string") {
+    emit("update:priorityFilter", value as "all" | Priority);
   }
 }
 
 function updateDeadlineFilter(value: unknown) {
-  if (typeof value === 'string') {
-    emit('update:deadlineFilter', value as DeadlineFilter)
+  if (typeof value === "string") {
+    emit("update:deadlineFilter", value as DeadlineFilter);
   }
 }
 
 function updateGroupFilter(value: unknown) {
-  if (typeof value === 'string') {
-    emit('update:groupFilter', value)
+  if (typeof value === "string") {
+    emit("update:groupFilter", value);
   }
 }
 
 function updateGroupBy(value: unknown) {
-  if (typeof value === 'string') {
-    emit('update:groupBy', value as GroupBy)
+  if (typeof value === "string") {
+    emit("update:groupBy", value as GroupBy);
   }
 }
 </script>
 
 <template>
-  <Card class="border-none bg-transparent py-0 shadow-none backdrop-blur-0 sm:border-white/70 sm:bg-white/88 sm:shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] sm:backdrop-blur">
+  <Card
+    class="border-none bg-transparent py-0 shadow-none backdrop-blur-0 sm:border-white/70 sm:bg-white/88 sm:shadow-[0_18px_70px_-45px_rgba(15,23,42,0.5)] sm:backdrop-blur"
+  >
     <CardContent class="px-0 py-0 sm:px-4 sm:py-3">
       <div class="flex items-center gap-2">
         <!-- Search -->
         <div class="relative min-w-0 flex-1 sm:max-w-[220px]">
-          <Icon class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" icon="solar:magnifer-linear" />
+          <Icon
+            class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+            icon="solar:magnifer-linear"
+          />
           <Input
             id="todo-search"
             :model-value="props.search"
@@ -89,61 +104,116 @@ function updateGroupBy(value: unknown) {
         <!-- Mobile: filter dropdown button -->
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
-            <Button class="relative rounded-xl border-slate-200 bg-white sm:hidden" size="icon" variant="outline" aria-label="Open filters" title="Open filters">
+            <Button
+              class="relative rounded-xl border-slate-200 bg-white sm:hidden"
+              size="icon"
+              variant="outline"
+              aria-label="Open filters"
+              title="Open filters"
+            >
               <Icon class="size-4" icon="solar:tuning-2-linear" />
-              <span v-if="props.hasActiveFilters" class="absolute right-2 top-2 size-2 rounded-full bg-teal-500" />
+              <span
+                v-if="props.hasActiveFilters"
+                class="absolute right-2 top-2 size-2 rounded-full bg-teal-500"
+              />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" class="w-[min(22rem,calc(100vw-2rem))] rounded-2xl border-white/80 bg-white/96 p-0 shadow-[0_20px_80px_-45px_rgba(15,23,42,0.55)]">
+          <DropdownMenuContent
+            align="end"
+            class="w-[min(22rem,calc(100vw-2rem))] rounded-2xl border-white/80 bg-white/96 p-0 shadow-[0_20px_80px_-45px_rgba(15,23,42,0.55)]"
+          >
             <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
               <p class="text-sm font-semibold text-slate-900">Filters</p>
-              <Button class="h-8 rounded-lg px-3 text-xs" variant="ghost" @click="emit('reset')">Reset</Button>
+              <Button class="h-8 rounded-lg px-3 text-xs" variant="ghost" @click="emit('reset')"
+                >Reset</Button
+              >
             </div>
             <div class="grid grid-cols-2 gap-3 p-4">
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700">Status</label>
                 <Select :model-value="props.statusFilter" @update:model-value="updateStatusFilter">
-                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Status" /></SelectTrigger>
+                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"
+                    ><SelectValue placeholder="Status"
+                  /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem v-for="option in props.statusOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+                    <SelectItem
+                      v-for="option in props.statusOptions"
+                      :key="option.value"
+                      :value="option.value"
+                      >{{ option.label }}</SelectItem
+                    >
                   </SelectContent>
                 </Select>
               </div>
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700">Priority</label>
-                <Select :model-value="props.priorityFilter" @update:model-value="updatePriorityFilter">
-                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Priority" /></SelectTrigger>
+                <Select
+                  :model-value="props.priorityFilter"
+                  @update:model-value="updatePriorityFilter"
+                >
+                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"
+                    ><SelectValue placeholder="Priority"
+                  /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All priorities</SelectItem>
-                    <SelectItem v-for="option in props.priorityOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+                    <SelectItem
+                      v-for="option in props.priorityOptions"
+                      :key="option.value"
+                      :value="option.value"
+                      >{{ option.label }}</SelectItem
+                    >
                   </SelectContent>
                 </Select>
               </div>
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700">Deadline</label>
-                <Select :model-value="props.deadlineFilter" @update:model-value="updateDeadlineFilter">
-                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Deadline" /></SelectTrigger>
+                <Select
+                  :model-value="props.deadlineFilter"
+                  @update:model-value="updateDeadlineFilter"
+                >
+                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"
+                    ><SelectValue placeholder="Deadline"
+                  /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem v-for="option in props.deadlineOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+                    <SelectItem
+                      v-for="option in props.deadlineOptions"
+                      :key="option.value"
+                      :value="option.value"
+                      >{{ option.label }}</SelectItem
+                    >
                   </SelectContent>
                 </Select>
               </div>
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700">Group list by</label>
                 <Select :model-value="props.groupBy" @update:model-value="updateGroupBy">
-                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Grouping" /></SelectTrigger>
+                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"
+                    ><SelectValue placeholder="Grouping"
+                  /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem v-for="option in props.groupByOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+                    <SelectItem
+                      v-for="option in props.groupByOptions"
+                      :key="option.value"
+                      :value="option.value"
+                      >{{ option.label }}</SelectItem
+                    >
                   </SelectContent>
                 </Select>
               </div>
               <div class="col-span-2 space-y-2">
                 <label class="text-sm font-medium text-slate-700">Group</label>
                 <Select :model-value="props.groupFilter" @update:model-value="updateGroupFilter">
-                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Group" /></SelectTrigger>
+                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"
+                    ><SelectValue placeholder="Group"
+                  /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All groups</SelectItem>
-                    <SelectItem v-for="group in props.availableGroups" :key="group" :value="group">{{ group }}</SelectItem>
+                    <SelectItem
+                      v-for="group in props.availableGroups"
+                      :key="group"
+                      :value="group"
+                      >{{ group }}</SelectItem
+                    >
                   </SelectContent>
                 </Select>
               </div>
@@ -154,47 +224,79 @@ function updateGroupBy(value: unknown) {
         <!-- Desktop: inline filter selects (no labels) -->
         <div class="hidden flex-1 sm:block">
           <Select :model-value="props.statusFilter" @update:model-value="updateStatusFilter">
-            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"
+              ><SelectValue placeholder="Status"
+            /></SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="option in props.statusOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+              <SelectItem
+                v-for="option in props.statusOptions"
+                :key="option.value"
+                :value="option.value"
+                >{{ option.label }}</SelectItem
+              >
             </SelectContent>
           </Select>
         </div>
 
         <div class="hidden flex-1 sm:block">
           <Select :model-value="props.priorityFilter" @update:model-value="updatePriorityFilter">
-            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Priority" /></SelectTrigger>
+            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"
+              ><SelectValue placeholder="Priority"
+            /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All priorities</SelectItem>
-              <SelectItem v-for="option in props.priorityOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+              <SelectItem
+                v-for="option in props.priorityOptions"
+                :key="option.value"
+                :value="option.value"
+                >{{ option.label }}</SelectItem
+              >
             </SelectContent>
           </Select>
         </div>
 
         <div class="hidden flex-1 sm:block">
           <Select :model-value="props.deadlineFilter" @update:model-value="updateDeadlineFilter">
-            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Deadline" /></SelectTrigger>
+            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"
+              ><SelectValue placeholder="Deadline"
+            /></SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="option in props.deadlineOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+              <SelectItem
+                v-for="option in props.deadlineOptions"
+                :key="option.value"
+                :value="option.value"
+                >{{ option.label }}</SelectItem
+              >
             </SelectContent>
           </Select>
         </div>
 
         <div class="hidden flex-1 sm:block">
           <Select :model-value="props.groupFilter" @update:model-value="updateGroupFilter">
-            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Group" /></SelectTrigger>
+            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"
+              ><SelectValue placeholder="Group"
+            /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All groups</SelectItem>
-              <SelectItem v-for="group in props.availableGroups" :key="group" :value="group">{{ group }}</SelectItem>
+              <SelectItem v-for="group in props.availableGroups" :key="group" :value="group">{{
+                group
+              }}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div class="hidden flex-1 sm:block">
           <Select :model-value="props.groupBy" @update:model-value="updateGroupBy">
-            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Group by" /></SelectTrigger>
+            <SelectTrigger class="h-9 w-full rounded-xl border-slate-200 bg-white"
+              ><SelectValue placeholder="Group by"
+            /></SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="option in props.groupByOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+              <SelectItem
+                v-for="option in props.groupByOptions"
+                :key="option.value"
+                :value="option.value"
+                >{{ option.label }}</SelectItem
+              >
             </SelectContent>
           </Select>
         </div>
@@ -204,7 +306,11 @@ function updateGroupBy(value: unknown) {
           <Button class="h-9 shrink-0 rounded-xl px-3" variant="outline" @click="emit('reset')">
             Reset
           </Button>
-          <Button v-if="props.showAddButton" class="h-9 shrink-0 rounded-xl px-4" @click="emit('add')">
+          <Button
+            v-if="props.showAddButton"
+            class="h-9 shrink-0 rounded-xl px-4"
+            @click="emit('add')"
+          >
             <Icon class="mr-1.5 size-4" icon="solar:add-circle-linear" />
             Add todo
           </Button>
