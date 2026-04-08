@@ -42,6 +42,7 @@ const props = withDefaults(defineProps<{
 
 const STORAGE_KEY = 'easy-todos.todos'
 const COLLAPSE_STORAGE_KEY = 'easy-todos.section-collapse'
+const FILTERS_STORAGE_KEY = 'easy-todos.filters'
 
 const todos = ref<Todo[]>([])
 const search = ref('')
@@ -101,6 +102,37 @@ function saveTodos() {
 
 function saveCollapsedSections() {
   window.localStorage.setItem(COLLAPSE_STORAGE_KEY, JSON.stringify(collapsedSections.value))
+}
+
+function loadFilters() {
+  const raw = window.localStorage.getItem(FILTERS_STORAGE_KEY)
+  if (!raw) {
+    return
+  }
+
+  try {
+    const parsed = JSON.parse(raw)
+    if (parsed && typeof parsed === 'object') {
+      if (parsed.statusFilter) statusFilter.value = parsed.statusFilter
+      if (parsed.priorityFilter) priorityFilter.value = parsed.priorityFilter
+      if (parsed.deadlineFilter) deadlineFilter.value = parsed.deadlineFilter
+      if (parsed.groupFilter) groupFilter.value = parsed.groupFilter
+      if (parsed.groupBy) groupBy.value = parsed.groupBy
+    }
+  }
+  catch {
+    // ignore
+  }
+}
+
+function saveFilters() {
+  window.localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({
+    statusFilter: statusFilter.value,
+    priorityFilter: priorityFilter.value,
+    deadlineFilter: deadlineFilter.value,
+    groupFilter: groupFilter.value,
+    groupBy: groupBy.value,
+  }))
 }
 
 function resetForm() {
@@ -295,6 +327,7 @@ const containerClass = computed(() =>
 onMounted(() => {
   loadTodos()
   loadCollapsedSections()
+  loadFilters()
   window.addEventListener('keydown', handleKeydown)
 })
 
@@ -304,6 +337,7 @@ onBeforeUnmount(() => {
 
 watch(todos, saveTodos, { deep: true })
 watch(collapsedSections, saveCollapsedSections, { deep: true })
+watch([statusFilter, priorityFilter, deadlineFilter, groupFilter, groupBy], saveFilters)
 </script>
 
 <template>
@@ -345,6 +379,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
             v-if="groupedTodos.length"
             :sections="groupedTodos"
             :expanded-sections="expandedSections"
+            :group-by="groupBy"
             :get-priority-tone="getPriorityTone"
             :get-status-tone="getStatusTone"
             :normalize-group="normalizeGroup"

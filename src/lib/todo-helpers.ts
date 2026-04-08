@@ -27,16 +27,17 @@ export function isUpcoming(todo: Todo, now = new Date()) {
   return Boolean(todo.deadline) && getDateValue(todo.deadline) > getTodayValue(now)
 }
 
-export function formatDeadline(value: string) {
+export function formatDeadline(value: string, now = new Date()) {
   if (!value) {
     return 'No deadline'
   }
 
+  const date = new Date(`${value}T00:00:00`)
   return new Intl.DateTimeFormat('en', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(`${value}T00:00:00`))
+    ...(date.getFullYear() !== now.getFullYear() ? { year: 'numeric' } : {}),
+  }).format(date)
 }
 
 export function getDeadlineLabel(todo: Todo, now = new Date()) {

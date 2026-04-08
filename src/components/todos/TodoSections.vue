@@ -7,11 +7,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import type { Priority, Todo, TodoSection } from '@/lib/todos'
+import type { GroupBy, Priority, Todo, TodoSection } from '@/lib/todos'
 
 const props = defineProps<{
   sections: TodoSection[]
   expandedSections: string[]
+  groupBy: GroupBy
   getPriorityTone: (priority: Priority) => string
   getStatusTone: (todo: Todo) => string
   normalizeGroup: (value: string) => string
@@ -93,8 +94,8 @@ function visibleItems(section: TodoSection) {
             </div>
 
             <!-- Text content — right padding makes room for the floating buttons -->
-            <div class="space-y-1.5 px-3 py-2.5 pr-[6.5rem]">
-              <p class="text-sm font-medium leading-snug text-slate-900" :class="todo.completed ? 'line-through opacity-55' : ''">
+            <div class="space-y-1.5 px-3 py-2.5">
+              <p class="pr-26 text-sm font-medium leading-snug text-slate-900" :class="todo.completed ? 'line-through opacity-55' : ''">
                 {{ todo.title }}
               </p>
               <p v-if="todo.description" class="text-xs leading-5 text-slate-500">
@@ -102,13 +103,13 @@ function visibleItems(section: TodoSection) {
               </p>
               <div class="flex flex-wrap items-center gap-1">
                 <Badge :class="props.getPriorityTone(todo.priority)">{{ todo.priority }} priority</Badge>
-                <Badge :class="props.getStatusTone(todo)">{{ todo.completed ? 'completed' : 'active' }}</Badge>
-                <Badge class="border-slate-200 bg-slate-100 text-slate-700">{{ props.normalizeGroup(todo.group) }}</Badge>
+                <!-- <Badge :class="props.getStatusTone(todo)">{{ todo.completed ? 'completed' : 'active' }}</Badge> -->
+                <Badge v-if="props.groupBy !== 'group'" class="border-slate-200 bg-slate-100 text-slate-700">{{ props.normalizeGroup(todo.group) }}</Badge>
+                <span v-if="todo.deadline" class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500 whitespace-nowrap">
+                  <Icon class="size-3.5 shrink-0 text-slate-500" icon="solar:calendar-mark-linear" />
+                  {{ props.getDeadlineLabel(todo) }}
+                </span>
               </div>
-              <span v-if="todo.deadline" class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500 whitespace-nowrap">
-                <Icon class="size-3.5 shrink-0 text-slate-500" icon="solar:calendar-mark-linear" />
-                {{ props.getDeadlineLabel(todo) }}
-              </span>
             </div>
           </Card>
         </div>

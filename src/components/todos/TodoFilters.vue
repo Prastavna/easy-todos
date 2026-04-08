@@ -99,7 +99,7 @@ function updateGroupBy(value: unknown) {
               <p class="text-sm font-semibold text-slate-900">Filters</p>
               <Button class="h-8 rounded-lg px-3 text-xs" variant="ghost" @click="emit('reset')">Reset</Button>
             </div>
-            <div class="grid gap-3 p-4 sm:grid-cols-2">
+            <div class="grid grid-cols-2 gap-3 p-4">
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700">Status</label>
                 <Select :model-value="props.statusFilter" @update:model-value="updateStatusFilter">
@@ -129,21 +129,21 @@ function updateGroupBy(value: unknown) {
                 </Select>
               </div>
               <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-700">Group list by</label>
+                <Select :model-value="props.groupBy" @update:model-value="updateGroupBy">
+                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Grouping" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="option in props.groupByOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div class="col-span-2 space-y-2">
                 <label class="text-sm font-medium text-slate-700">Group</label>
                 <Select :model-value="props.groupFilter" @update:model-value="updateGroupFilter">
                   <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Group" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All groups</SelectItem>
                     <SelectItem v-for="group in props.availableGroups" :key="group" :value="group">{{ group }}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div class="space-y-2 sm:col-span-2">
-                <label class="text-sm font-medium text-slate-700">Group list by</label>
-                <Select :model-value="props.groupBy" @update:model-value="updateGroupBy">
-                  <SelectTrigger class="h-10 w-full rounded-xl border-slate-200 bg-white"><SelectValue placeholder="Grouping" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem v-for="option in props.groupByOptions" :key="option.value" :value="option.value">{{ option.label }}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
