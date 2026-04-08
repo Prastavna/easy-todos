@@ -78,7 +78,7 @@ function visibleItems(section: TodoSection) {
       </AccordionTrigger>
 
       <AccordionContent class="pb-0.5">
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-1.5 px-2 pb-2">
+        <div class="flex flex-col sm:grid sm:grid-cols-2 gap-1.5 px-2 pb-2">
           <Card
             v-for="todo in visibleItems(section)"
             :key="todo.id"
@@ -128,7 +128,7 @@ function visibleItems(section: TodoSection) {
               >
                 {{ todo.title }}
               </p>
-              <p v-if="todo.description" class="text-xs leading-5 text-slate-500">
+              <p v-if="todo.description" class="max-h-20 overflow-y-auto text-xs leading-5 text-slate-500">
                 {{ todo.description }}
               </p>
               <div class="flex flex-wrap items-center gap-1">

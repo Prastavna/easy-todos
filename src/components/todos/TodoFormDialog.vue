@@ -66,7 +66,7 @@ const emit = defineEmits<{
           <label class="text-sm font-medium text-slate-700">Description</label>
           <Textarea
             v-model="props.form.description"
-            class="min-h-24 rounded-xl border-slate-200"
+            class="min-h-24 max-h-48 rounded-xl border-slate-200"
             placeholder="Optional notes, links, or context for the task"
           />
         </div>
