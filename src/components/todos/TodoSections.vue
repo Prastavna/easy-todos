@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -24,6 +25,18 @@ const emit = defineEmits<{
   edit: [todo: Todo]
   remove: [id: string]
 }>()
+
+const showCompleted = ref<Record<string, boolean>>({})
+
+function toggleShowCompleted(key: string) {
+  showCompleted.value[key] = !showCompleted.value[key]
+}
+
+function visibleItems(section: TodoSection) {
+  return showCompleted.value[section.key]
+    ? section.items
+    : section.items.filter(t => !t.completed)
+}
 </script>
 
 <template>
@@ -46,7 +59,7 @@ const emit = defineEmits<{
               {{ section.label }}
             </h2>
             <p class="pl-1 text-xs text-slate-500">
-              ({{ section.items.length }} task{{ section.items.length === 1 ? '' : 's' }})
+              ({{ section.items.filter(t => !t.completed).length }} active{{ section.items.some(t => t.completed) ? `, ${section.items.filter(t => t.completed).length} done` : '' }})
             </p>
           </div>
           <Separator class="hidden flex-1 bg-slate-200 sm:block" />
@@ -56,9 +69,10 @@ const emit = defineEmits<{
       <AccordionContent class="pb-0.5">
         <div class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-1.5 px-2 pb-2">
           <Card
-            v-for="todo in section.items"
+            v-for="todo in visibleItems(section)"
             :key="todo.id"
-            class="relative border-white/80 bg-white/92 py-0 shadow-[0_16px_60px_-44px_rgba(15,23,42,0.55)]"
+            class="relative border-white/80 bg-white/92 py-0 shadow-[0_16px_60px_-44px_rgba(15,23,42,0.55)] transition-opacity"
+            :class="todo.completed ? 'opacity-45 grayscale' : ''"
           >
             <!-- Action buttons: absolutely positioned top-right -->
             <div class="absolute right-2 top-2 flex items-center gap-1">
@@ -97,6 +111,20 @@ const emit = defineEmits<{
               </span>
             </div>
           </Card>
+        </div>
+
+        <!-- Show completed toggle — only rendered when there are completed items -->
+        <div v-if="section.items.some(t => t.completed)" class="px-3 pb-2.5">
+          <button
+            class="flex items-center gap-1.5 text-xs text-slate-400 transition-colors hover:text-slate-600"
+            @click.stop="toggleShowCompleted(section.key)"
+          >
+            <Icon
+              class="size-3.5"
+              :icon="showCompleted[section.key] ? 'solar:eye-closed-linear' : 'solar:eye-linear'"
+            />
+            {{ showCompleted[section.key] ? 'Hide completed' : `Show ${section.items.filter(t => t.completed).length} completed` }}
+          </button>
         </div>
       </AccordionContent>
     </AccordionItem>
