@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /home/pagal/Projects/prastavna/easy-todos log --oneline -10)"
+    ]
+  }
+}
