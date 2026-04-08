@@ -307,7 +307,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
 </script>
 
 <template>
-  <div class="app-shell min-h-screen" :class="isPopup ? 'min-w-[390px]' : ''">
+  <div class="app-shell min-h-150" :class="isPopup ? 'min-w-97.5' : ''">
     <Button v-if="props.mode === 'popup'" class="fixed left-1 top-1 z-40 rounded-full border-slate-200/80 bg-white/78 opacity-35 shadow-[0_12px_36px_-24px_rgba(15,23,42,0.45)] backdrop-blur transition-opacity hover:opacity-100 focus-visible:opacity-100" size="icon" variant="outline" aria-label="Open in tab" title="Open in tab" @click="handleOpenInTab">
       <Icon class="size-4" icon="solar:square-arrow-right-up-linear" />
     </Button>
@@ -329,6 +329,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
           :deadline-options="deadlineOptions"
           :group-by-options="groupByOptions"
           :has-active-filters="hasActiveFilters"
+          :show-add-button="!isPopup"
           @update:search="search = $event"
           @update:status-filter="statusFilter = $event"
           @update:priority-filter="priorityFilter = $event"
@@ -336,6 +337,7 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
           @update:group-filter="groupFilter = $event"
           @update:group-by="groupBy = $event"
           @reset="clearFilters"
+          @add="openCreateDialog"
         />
 
         <main class="space-y-2">
@@ -391,8 +393,9 @@ watch(collapsedSections, saveCollapsedSections, { deep: true })
       @submit="saveTodo"
     />
 
+    <!-- FAB: only on popup / mobile -->
     <Button
-      class="fixed bottom-5 right-5 z-40 rounded-full shadow-[0_18px_40px_-18px_rgba(15,23,42,0.55)]"
+      class="fixed bottom-5 right-5 z-40 rounded-full shadow-[0_18px_40px_-18px_rgba(15,23,42,0.55)] sm:hidden"
       size="icon-lg"
       aria-label="Add todo"
       title="Add todo"

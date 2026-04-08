@@ -37,7 +37,7 @@ const emit = defineEmits<{
       v-for="section in props.sections"
       :key="section.key"
       :value="section.key"
-      class="rounded-xl border border-slate-300/30 shadow-[0_12px_50px_-40px_rgba(15,23,42,0.45)]"
+      class="rounded-xl border! border-slate-300/30 shadow-[0_12px_50px_-40px_rgba(15,23,42,0.45)]"
     >
       <AccordionTrigger class="px-3 py-1.5 hover:no-underline">
         <div class="flex min-w-0 flex-1 items-center gap-3">
