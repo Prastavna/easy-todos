@@ -1,6 +1,6 @@
 import type { Todo } from "@/lib/todos";
 
-const STORAGE_KEY = "easy-todos.todos";
+export const TODO_STORAGE_KEY = "easy-todos.todos";
 
 function hasChromeStorage() {
   return typeof chrome !== "undefined" && Boolean(chrome.storage?.local);
@@ -25,30 +25,30 @@ function toPlainTodos(todos: Todo[]) {
 
 export async function loadStoredTodos() {
   if (hasChromeStorage()) {
-    const stored = await chrome.storage.local.get(STORAGE_KEY);
-    if (Array.isArray(stored[STORAGE_KEY])) {
-      return stored[STORAGE_KEY] as Todo[];
+    const stored = await chrome.storage.local.get(TODO_STORAGE_KEY);
+    if (Array.isArray(stored[TODO_STORAGE_KEY])) {
+      return stored[TODO_STORAGE_KEY] as Todo[];
     }
 
-    const legacyTodos = parseLegacyTodos(window.localStorage.getItem(STORAGE_KEY));
+    const legacyTodos = parseLegacyTodos(window.localStorage.getItem(TODO_STORAGE_KEY));
     if (legacyTodos.length > 0) {
-      await chrome.storage.local.set({ [STORAGE_KEY]: legacyTodos });
+      await chrome.storage.local.set({ [TODO_STORAGE_KEY]: legacyTodos });
       return legacyTodos;
     }
 
     return [] as Todo[];
   }
 
-  return parseLegacyTodos(window.localStorage.getItem(STORAGE_KEY));
+  return parseLegacyTodos(window.localStorage.getItem(TODO_STORAGE_KEY));
 }
 
 export async function saveStoredTodos(todos: Todo[]) {
   if (hasChromeStorage()) {
-    await chrome.storage.local.set({ [STORAGE_KEY]: toPlainTodos(todos) });
+    await chrome.storage.local.set({ [TODO_STORAGE_KEY]: toPlainTodos(todos) });
     return;
   }
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  window.localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
 }
 
 export function subscribeToStoredTodos(listener: (todos: Todo[]) => void) {
@@ -57,11 +57,11 @@ export function subscribeToStoredTodos(listener: (todos: Todo[]) => void) {
       changes: Record<string, chrome.storage.StorageChange>,
       areaName: string,
     ) => {
-      if (areaName !== "local" || !changes[STORAGE_KEY]) {
+      if (areaName !== "local" || !changes[TODO_STORAGE_KEY]) {
         return;
       }
 
-      const nextTodos = changes[STORAGE_KEY].newValue;
+      const nextTodos = changes[TODO_STORAGE_KEY].newValue;
       listener(Array.isArray(nextTodos) ? (nextTodos as Todo[]) : []);
     };
 
@@ -70,7 +70,7 @@ export function subscribeToStoredTodos(listener: (todos: Todo[]) => void) {
   }
 
   const handleStorage = (event: StorageEvent) => {
-    if (event.key !== STORAGE_KEY) {
+    if (event.key !== TODO_STORAGE_KEY) {
       return;
     }
 

@@ -13,6 +13,10 @@ export default defineManifest({
     128: "icons/icon128.png"
   },
   permissions: ["storage"],
+  background: {
+    service_worker: "src/background.ts",
+    type: "module",
+  },
   action: {
     default_popup: "popup.html",
     default_title: packageJson.name,
