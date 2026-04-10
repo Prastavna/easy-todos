@@ -3,7 +3,7 @@ import packageJson from "./package.json" with { type: "json" };
 
 export default {
   manifest_version: 3,
-  name: packageJson.name,
+  name: "Easy Todos",
   description: packageJson.description,
   version: packageJson.version,
   icons: {
