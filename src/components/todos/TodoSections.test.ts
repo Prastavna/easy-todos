@@ -38,8 +38,9 @@ const stubs = {
 function mountSections(todo: Todo) {
   return mount(TodoSections, {
     props: {
-      sections: [{ key: "general", label: "General", items: [todo] }],
+      sections: [{ key: "general", label: "General", order: 0, items: [todo] }],
       expandedSections: ["general"],
+      groupBy: "group",
       getPriorityTone: () => "priority-tone",
       getStatusTone: () => "status-tone",
       normalizeGroup: (value: string) => value,

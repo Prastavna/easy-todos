@@ -202,11 +202,14 @@ async function mountTodoApp(mode: "web" | "popup" | "tab" = "tab") {
 
 describe("TodoApp", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-07T10:00:00.000Z"));
     localStorage.clear();
     vi.spyOn(crypto, "randomUUID").mockReturnValue("11111111-1111-1111-1111-111111111111");
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
     vi.mocked(openAppInTab).mockReset();
     document.body.innerHTML = "";
@@ -226,6 +229,21 @@ describe("TodoApp", () => {
 
     expect(wrapper.get('[data-test="sections"]').text()).toContain("Loaded one");
     expect(wrapper.get('[data-test="sections"]').text()).toContain("Loaded two");
+  });
+
+  it("updates when todos change in another view", async () => {
+    const wrapper = await mountTodoApp();
+
+    const syncedTodos = [createTodo({ id: "1", title: "Synced from tab", group: "Ops" })];
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key: "easy-todos.todos",
+        newValue: JSON.stringify(syncedTodos),
+      }),
+    );
+    await nextTick();
+
+    expect(wrapper.get('[data-test="sections"]').text()).toContain("Synced from tab");
   });
 
   it("shows stats derived from loaded todos", async () => {

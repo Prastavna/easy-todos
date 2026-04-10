@@ -1,6 +1,7 @@
 {
   "name": "easy-todos",
-  "version": "0.0.0",
+  "description": "A local-first todo app with priorities, deadlines, filters, and groups.",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {

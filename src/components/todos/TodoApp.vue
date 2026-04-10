@@ -21,6 +21,7 @@ import {
   isUpcoming,
   normalizeGroup,
 } from "@/lib/todo-helpers";
+import { loadStoredTodos, saveStoredTodos, subscribeToStoredTodos } from "@/lib/todo-storage";
 import { openAppInTab } from "@/lib/extension";
 import {
   deadlineOptions,
@@ -43,7 +44,6 @@ const props = withDefaults(
   },
 );
 
-const STORAGE_KEY = "easy-todos.todos";
 const COLLAPSE_STORAGE_KEY = "easy-todos.section-collapse";
 const FILTERS_STORAGE_KEY = "easy-todos.filters";
 
@@ -58,6 +58,8 @@ const dialogOpen = ref(false);
 const editingId = ref<string | null>(null);
 const form = ref<TodoForm>(createEmptyForm());
 const collapsedSections = ref<Record<string, boolean>>({});
+let skipNextTodoSave = false;
+let unsubscribeFromTodoStorage = () => {};
 
 function createEmptyForm(): TodoForm {
   return {
@@ -69,18 +71,9 @@ function createEmptyForm(): TodoForm {
   };
 }
 
-function loadTodos() {
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return;
-  }
-
-  try {
-    const parsed = JSON.parse(raw) as Todo[];
-    todos.value = Array.isArray(parsed) ? parsed : [];
-  } catch {
-    todos.value = [];
-  }
+async function loadTodos() {
+  skipNextTodoSave = true;
+  todos.value = await loadStoredTodos();
 }
 
 function loadCollapsedSections() {
@@ -97,8 +90,8 @@ function loadCollapsedSections() {
   }
 }
 
-function saveTodos() {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos.value));
+async function saveTodos() {
+  await saveStoredTodos(todos.value);
 }
 
 function saveCollapsedSections() {
@@ -333,18 +326,35 @@ const containerClass = computed(() =>
     : "mx-auto flex min-h-screen w-full max-w-[1400px] flex-col gap-4 px-4 py-5 sm:px-5 lg:px-6 lg:py-8",
 );
 
-onMounted(() => {
-  loadTodos();
+onMounted(async () => {
+  unsubscribeFromTodoStorage = subscribeToStoredTodos((nextTodos) => {
+    skipNextTodoSave = true;
+    todos.value = nextTodos;
+  });
+
+  await loadTodos();
   loadCollapsedSections();
   loadFilters();
   window.addEventListener("keydown", handleKeydown);
 });
 
 onBeforeUnmount(() => {
+  unsubscribeFromTodoStorage();
   window.removeEventListener("keydown", handleKeydown);
 });
 
-watch(todos, saveTodos, { deep: true });
+watch(
+  todos,
+  () => {
+    if (skipNextTodoSave) {
+      skipNextTodoSave = false;
+      return;
+    }
+
+    void saveTodos();
+  },
+  { deep: true },
+);
 watch(collapsedSections, saveCollapsedSections, { deep: true });
 watch([statusFilter, priorityFilter, deadlineFilter, groupFilter, groupBy], saveFilters);
 </script>

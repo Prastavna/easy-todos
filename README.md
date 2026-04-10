@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/favicon.svg" alt="Easy Todos icon" width="96" height="96">
+</p>
+
 # Easy Todos
 
 A local-first todo app with priorities, deadlines, groups, and filters. Runs as a browser extension (popup + full tab) and as a standalone web app. All data stays in your browser via `localStorage` — no account or server required.

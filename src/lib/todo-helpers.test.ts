@@ -59,7 +59,7 @@ describe("todo helpers", () => {
 
   it("formats deadline and update dates", () => {
     expect(formatDeadline("")).toBe("No deadline");
-    expect(formatDeadline("2026-03-24")).toBe("Mar 24, 2026");
+    expect(formatDeadline("2026-03-24")).toBe("Mar 24");
     expect(formatUpdatedAt("2026-03-24T12:00:00.000Z")).toBe("Mar 24, 2026");
   });
 
