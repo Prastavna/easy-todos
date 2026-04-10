@@ -1,7 +1,7 @@
-import { defineManifest } from "@crxjs/vite-plugin";
+import type { ManifestV3Export } from "@crxjs/vite-plugin";
 import packageJson from "./package.json" with { type: "json" };
 
-export default defineManifest({
+export default {
   manifest_version: 3,
   name: packageJson.name,
   description: packageJson.description,
@@ -22,4 +22,4 @@ export default defineManifest({
     default_title: packageJson.name,
   },
   options_page: "app.html",
-});
+} satisfies ManifestV3Export;
