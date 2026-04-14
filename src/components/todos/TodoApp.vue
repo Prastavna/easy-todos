@@ -456,6 +456,7 @@ watch([statusFilter, priorityFilter, deadlineFilter, groupFilter, groupBy], save
       :can-submit="canSubmit"
       :is-editing="Boolean(editingId)"
       :priority-options="priorityOptions"
+      :available-groups="availableGroups"
       @update:open="dialogOpen = $event"
       @submit="saveTodo"
     />
